@@ -1,0 +1,132 @@
+import { NextResponse } from "next/server"
+
+// Dados de exemplo para os principais ativos de cada universo
+const assets = {
+  stocks: [
+    { id: "AAPL", name: "Apple Inc." },
+    { id: "MSFT", name: "Microsoft Corporation" },
+    { id: "AMZN", name: "Amazon.com Inc." },
+    { id: "GOOGL", name: "Alphabet Inc." },
+    { id: "META", name: "Meta Platforms Inc." },
+    { id: "TSLA", name: "Tesla Inc." },
+    { id: "BRK-A", name: "Berkshire Hathaway Inc." },
+    { id: "NVDA", name: "NVIDIA Corporation" },
+    { id: "JPM", name: "JPMorgan Chase & Co." },
+    { id: "V", name: "Visa Inc." },
+    { id: "JNJ", name: "Johnson & Johnson" },
+    { id: "UNH", name: "UnitedHealth Group Inc." },
+    { id: "HD", name: "The Home Depot Inc." },
+    { id: "PG", name: "Procter & Gamble Co." },
+    { id: "MA", name: "Mastercard Inc." },
+    { id: "BAC", name: "Bank of America Corp." },
+    { id: "XOM", name: "Exxon Mobil Corporation" },
+    { id: "AVGO", name: "Broadcom Inc." },
+    { id: "COST", name: "Costco Wholesale Corporation" },
+    { id: "DIS", name: "The Walt Disney Company" },
+  ],
+  crypto: [
+    { id: "BTC", name: "Bitcoin" },
+    { id: "ETH", name: "Ethereum" },
+    { id: "BNB", name: "Binance Coin" },
+    { id: "SOL", name: "Solana" },
+    { id: "XRP", name: "XRP" },
+    { id: "ADA", name: "Cardano" },
+    { id: "DOGE", name: "Dogecoin" },
+    { id: "DOT", name: "Polkadot" },
+    { id: "AVAX", name: "Avalanche" },
+    { id: "SHIB", name: "Shiba Inu" },
+    { id: "MATIC", name: "Polygon" },
+    { id: "LTC", name: "Litecoin" },
+    { id: "UNI", name: "Uniswap" },
+    { id: "LINK", name: "Chainlink" },
+    { id: "XLM", name: "Stellar" },
+    { id: "ATOM", name: "Cosmos" },
+    { id: "ALGO", name: "Algorand" },
+    { id: "FIL", name: "Filecoin" },
+    { id: "VET", name: "VeChain" },
+    { id: "MANA", name: "Decentraland" },
+  ],
+  forex: [
+    { id: "EUR/USD", name: "Euro / US Dollar" },
+    { id: "USD/JPY", name: "US Dollar / Japanese Yen" },
+    { id: "GBP/USD", name: "British Pound / US Dollar" },
+    { id: "USD/CHF", name: "US Dollar / Swiss Franc" },
+    { id: "AUD/USD", name: "Australian Dollar / US Dollar" },
+    { id: "USD/CAD", name: "US Dollar / Canadian Dollar" },
+    { id: "NZD/USD", name: "New Zealand Dollar / US Dollar" },
+    { id: "EUR/GBP", name: "Euro / British Pound" },
+    { id: "EUR/JPY", name: "Euro / Japanese Yen" },
+    { id: "GBP/JPY", name: "British Pound / Japanese Yen" },
+    { id: "USD/MXN", name: "US Dollar / Mexican Peso" },
+    { id: "USD/BRL", name: "US Dollar / Brazilian Real" },
+    { id: "USD/CNY", name: "US Dollar / Chinese Yuan" },
+    { id: "USD/RUB", name: "US Dollar / Russian Ruble" },
+    { id: "USD/INR", name: "US Dollar / Indian Rupee" },
+    { id: "USD/TRY", name: "US Dollar / Turkish Lira" },
+    { id: "USD/ZAR", name: "US Dollar / South African Rand" },
+    { id: "USD/HKD", name: "US Dollar / Hong Kong Dollar" },
+    { id: "USD/SGD", name: "US Dollar / Singapore Dollar" },
+    { id: "USD/SEK", name: "US Dollar / Swedish Krona" },
+  ],
+  commodities: [
+    { id: "GC=F", name: "Gold" },
+    { id: "SI=F", name: "Silver" },
+    { id: "CL=F", name: "Crude Oil" },
+    { id: "NG=F", name: "Natural Gas" },
+    { id: "HG=F", name: "Copper" },
+    { id: "PL=F", name: "Platinum" },
+    { id: "PA=F", name: "Palladium" },
+    { id: "ZC=F", name: "Corn" },
+    { id: "ZW=F", name: "Wheat" },
+    { id: "ZS=F", name: "Soybeans" },
+    { id: "KC=F", name: "Coffee" },
+    { id: "SB=F", name: "Sugar" },
+    { id: "CC=F", name: "Cocoa" },
+    { id: "CT=F", name: "Cotton" },
+    { id: "LBS=F", name: "Lumber" },
+    { id: "OJ=F", name: "Orange Juice" },
+    { id: "LH=F", name: "Lean Hogs" },
+    { id: "LE=F", name: "Live Cattle" },
+    { id: "RB=F", name: "Gasoline" },
+    { id: "HO=F", name: "Heating Oil" },
+  ],
+  indices: [
+    { id: "^GSPC", name: "S&P 500" },
+    { id: "^DJI", name: "Dow Jones Industrial Average" },
+    { id: "^IXIC", name: "NASDAQ Composite" },
+    { id: "^RUT", name: "Russell 2000" },
+    { id: "^FTSE", name: "FTSE 100" },
+    { id: "^GDAXI", name: "DAX" },
+    { id: "^FCHI", name: "CAC 40" },
+    { id: "^STOXX50E", name: "EURO STOXX 50" },
+    { id: "^N225", name: "Nikkei 225" },
+    { id: "^HSI", name: "Hang Seng Index" },
+    { id: "000001.SS", name: "Shanghai Composite" },
+    { id: "^BSESN", name: "BSE SENSEX" },
+    { id: "^BVSP", name: "IBOVESPA" },
+    { id: "^MXX", name: "IPC Mexico" },
+    { id: "^AORD", name: "All Ordinaries" },
+    { id: "^KS11", name: "KOSPI" },
+    { id: "^TA125.TA", name: "Tel Aviv 125" },
+    { id: "^JN0U.JO", name: "JSE All Share" },
+    { id: "^MERV", name: "MERVAL" },
+    { id: "^GSPTSE", name: "S&P/TSX Composite" },
+  ],
+}
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const universe = searchParams.get("universe")
+
+  if (!universe || !assets[universe as keyof typeof assets]) {
+    return NextResponse.json({ success: false, error: "Universo inválido ou não especificado" }, { status: 400 })
+  }
+
+  // Simular um pequeno atraso para mostrar o estado de carregamento na UI
+  await new Promise((resolve) => setTimeout(resolve, 500))
+
+  return NextResponse.json({
+    success: true,
+    assets: assets[universe as keyof typeof assets],
+  })
+}
