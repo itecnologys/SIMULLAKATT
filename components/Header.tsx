@@ -13,7 +13,8 @@ export default function Header() {
   const navigationItems = [
     { name: 'My account', href: '/dashboard' },
     { name: 'Card', href: '/card', badge: 'new' },
-    { name: 'Buy Crypto', href: '/buy-crypto' },
+    { name: 'Reports', href: '/reports' },
+    { name: 'Operações', href: '/operations' },
     { name: 'Swap', href: '/swap' },
     { name: 'Deposits and withdrawals', href: '/deposits', hasDropdown: true },
     { name: 'More products', href: '/more', hasDropdown: true },

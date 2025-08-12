@@ -3,6 +3,7 @@ import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import './globals.css'
 import Header from '@/components/Header'
+import { SimulationProvider } from '@/contexts/SimulationContext'
 
 export const metadata: Metadata = {
   title: 'SIMULLAKT - Simulação Financeira Avançada',
@@ -18,10 +19,12 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <body suppressHydrationWarning={true} className={`${GeistSans.className} bg-white`}>
-        <Header />
-        <main className="pt-16">
-          {children}
-        </main>
+        <SimulationProvider>
+          <Header />
+          <main className="pt-16">
+            {children}
+          </main>
+        </SimulationProvider>
       </body>
     </html>
   )
