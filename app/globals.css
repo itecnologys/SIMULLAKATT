@@ -45,6 +45,14 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* Picnic Layout Colors */
+    --picnic-green: 142 76% 36%;
+    --picnic-green-light: 142 76% 96%;
+    --picnic-gray: 220 13% 91%;
+    --picnic-gray-light: 220 14% 96%;
+    --picnic-text: 220 9% 46%;
+    --picnic-text-dark: 220 9% 26%;
   }
   .dark {
     --background: 0 0% 3.9%;
@@ -88,8 +96,68 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
   }
   html {
     font-family: var(--font-sans);
+  }
+}
+
+/* Picnic Layout Specific Styles */
+@layer components {
+  .picnic-card {
+    @apply bg-white shadow-sm border border-gray-100 rounded-lg;
+  }
+  
+  .picnic-green {
+    @apply text-green-600;
+  }
+  
+  .picnic-green-bg {
+    @apply bg-green-600;
+  }
+  
+  .picnic-green-light {
+    @apply bg-green-50 border-green-200;
+  }
+  
+  .picnic-text {
+    @apply text-gray-700;
+  }
+  
+  .picnic-text-dark {
+    @apply text-gray-900;
+  }
+  
+  .picnic-text-light {
+    @apply text-gray-600;
+  }
+  
+  .picnic-border {
+    @apply border-gray-100;
+  }
+  
+  .picnic-button {
+    @apply bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors;
+  }
+  
+  .picnic-button-outline {
+    @apply border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors;
+  }
+  
+  .picnic-header {
+    @apply fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100;
+  }
+  
+  .picnic-nav-link {
+    @apply flex items-center space-x-1 px-3 py-2 text-sm font-medium rounded-md transition-colors;
+  }
+  
+  .picnic-nav-link-active {
+    @apply text-green-600 border-b-2 border-green-600;
+  }
+  
+  .picnic-nav-link-inactive {
+    @apply text-gray-700 hover:text-green-600;
   }
 }

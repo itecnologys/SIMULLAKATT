@@ -1,164 +1,260 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ArrowRight, BarChart3, TrendingUp, Shield, Zap, Target } from "lucide-react"
+import { 
+  Clock, 
+  Bitcoin, 
+  CreditCard, 
+  DollarSign, 
+  TrendingUp, 
+  ChevronRight,
+  Eye,
+  Plus,
+  Minus,
+  ArrowUpRight,
+  Coins,
+  Leaf
+} from "lucide-react"
 import Link from "next/link"
 
 export default function HomePage() {
-  const [isLoaded, setIsLoaded] = useState(false)
-
-  useEffect(() => {
-    setIsLoaded(true)
-  }, [])
+  const [showSmallValues, setShowSmallValues] = useState(false)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
-      {/* Hero Section Otimizada */}
-      <section className="relative overflow-hidden py-20 px-4">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className={`space-y-8 ${isLoaded ? "animate-in slide-in-from-left duration-700" : "opacity-0"}`}>
-              <div className="space-y-4">
-                <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                  <Zap className="h-3 w-3 mr-1" />
-                  Simulação Avançada
-                </Badge>
-                <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-                  <span className="text-primary">SIMULLAKT</span>
-                  <br />
-                  <span className="text-slate-700">Investimentos</span>
-                </h1>
-                <p className="text-xl text-slate-600 leading-relaxed">
-                  Simule estratégias de investimento com dados reais de mercado. Teste diferentes cenários antes de
-                  investir seu dinheiro real.
-                </p>
-              </div>
+    <div className="min-h-screen bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Main Content - Left/Center */}
+          <div className="lg:col-span-2 space-y-8">
+            
+            {/* Overview Section */}
+            <Card className="picnic-card">
+              <CardHeader className="pb-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Clock className="h-5 w-5 picnic-text-light" />
+                    <CardTitle className="text-lg font-semibold picnic-text-dark">Overview</CardTitle>
+                  </div>
+                </div>
+                <CardDescription className="text-sm picnic-text-light">
+                  Total invested + Multicurrency Account
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Total Balance */}
+                <div className="text-center">
+                  <div className="text-3xl font-bold picnic-green mb-2">€1,500.00</div>
+                </div>
 
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" asChild className="text-lg px-8">
-                  <Link href="/dashboard">
-                    Começar Simulação
-                    <ArrowRight className="ml-2 h-5 w-5" />
+                {/* Balance Categories */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center p-4 border-r picnic-border">
+                    <div className="text-sm picnic-text-light mb-1">Cryptocurrencies</div>
+                    <div className="text-lg font-semibold picnic-text-dark">€1,500.00</div>
+                  </div>
+                  <div className="text-center p-4">
+                    <div className="text-sm picnic-text-light mb-1">Easy Earn</div>
+                    <div className="text-lg font-semibold picnic-text-dark">€0.00</div>
+                  </div>
+                  <div className="text-center p-4 border-r picnic-border border-t picnic-border">
+                    <div className="text-sm picnic-text-light mb-1">Crypto Baskets</div>
+                    <div className="text-lg font-semibold picnic-text-dark">€0.00</div>
+                  </div>
+                  <div className="text-center p-4 border-t picnic-border">
+                    <div className="text-sm picnic-text-light mb-1">Multi-currency account</div>
+                    <div className="text-lg font-semibold picnic-text-dark">€0.00</div>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="grid grid-cols-2 gap-3">
+                  <Button className="picnic-button">
+                    Deposit
+                  </Button>
+                  <Button variant="outline" className="picnic-button-outline">
+                    Withdraw funds
+                  </Button>
+                  <Button variant="outline" className="picnic-button-outline">
+                    Buy
+                  </Button>
+                  <Button variant="outline" className="picnic-button-outline">
+                    Swap
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Picnic Card Section */}
+            <Card className="picnic-green-light">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <CreditCard className="h-6 w-6 picnic-green" />
+                    <div>
+                      <CardTitle className="text-lg font-semibold picnic-text-dark">Picnic Card</CardTitle>
+                      <div className="text-sm picnic-text-light">Card balance</div>
+                      <div className="text-xl font-bold picnic-green">€ 4.68</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <Button variant="link" className="picnic-green hover:text-green-700 p-0">
+                      Add funds
+                    </Button>
+                    <div className="bg-black text-white text-xs px-2 py-1 rounded">
+                      VISA
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Cryptocurrencies Section */}
+            <Card className="picnic-card">
+              <CardHeader className="pb-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Bitcoin className="h-5 w-5 picnic-text-light" />
+                    <CardTitle className="text-lg font-semibold picnic-text-dark">Cryptocurrencies</CardTitle>
+                  </div>
+                  <Link href="/cryptocurrencies" className="picnic-green hover:text-green-700 text-sm font-medium">
+                    View more <ChevronRight className="h-4 w-4 inline" />
                   </Link>
-                </Button>
-                <Button variant="outline" size="lg" asChild className="text-lg px-8 bg-transparent">
-                  <Link href="/market-analysis">Ver Análises</Link>
-                </Button>
-              </div>
-            </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Column Headers */}
+                <div className="grid grid-cols-3 gap-4 text-sm font-medium picnic-text-light border-b picnic-border pb-2">
+                  <div className="flex items-center space-x-1">
+                    <span>Balance</span>
+                    <ArrowUpRight className="h-3 w-3" />
+                  </div>
+                  <div>Current Price</div>
+                  <div>Change 24h</div>
+                </div>
 
-            {/* Área de Simulação Visual Simplificada */}
-            <div className={`relative ${isLoaded ? "animate-in slide-in-from-right duration-700" : "opacity-0"}`}>
-              <Card className="relative overflow-hidden bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BarChart3 className="h-5 w-5 text-primary" />
-                    Simulação em Tempo Real
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Indicadores Simplificados */}
+                {/* No data message */}
+                <div className="text-center py-8 picnic-text-light">
+                  <Bitcoin className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                  <p>No cryptocurrencies found</p>
+                </div>
+
+                {/* Display Options */}
+                <div className="border-t picnic-border pt-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-slate-600">Portfolio Value</span>
-                    <span className="font-bold text-green-600">€15,247.89</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-slate-600">Daily P&L</span>
-                    <span className="font-bold text-green-600">+€247.32 (+1.65%)</span>
-                  </div>
-
-                  {/* Gráfico Simplificado */}
-                  <div className="space-y-2 mt-6">
-                    <div className="h-2 bg-slate-200 rounded overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-green-400 to-green-600 w-3/4 animate-pulse"></div>
-                    </div>
-                    <div className="h-2 bg-slate-200 rounded overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-blue-400 to-blue-600 w-2/3 animate-pulse"
-                        style={{ animationDelay: "0.5s" }}
-                      ></div>
-                    </div>
-                    <div className="h-2 bg-slate-200 rounded overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-purple-400 to-purple-600 w-4/5 animate-pulse"
-                        style={{ animationDelay: "1s" }}
-                      ></div>
+                    <div className="flex items-center space-x-3">
+                      <label className="flex items-center space-x-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={showSmallValues}
+                          onChange={(e) => setShowSmallValues(e.target.checked)}
+                          className="rounded border-gray-300 picnic-green focus:ring-green-500"
+                        />
+                        <span className="text-sm picnic-text">Show small values</span>
+                      </label>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section Otimizada */}
-      <section className="py-20 px-4 bg-slate-50">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4">Como Funciona</h2>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              Três passos simples para começar a simular seus investimentos
-            </p>
+                  <p className="text-xs picnic-text-light mt-1">
+                    Display 1 cryptocurrencies with a balance less than 1 dollar
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: Target,
-                title: "1. Configure",
-                description: "Defina seus parâmetros de investimento, taxa de lucro e período de simulação",
-              },
-              {
-                icon: TrendingUp,
-                title: "2. Simule",
-                description: "Execute simulações com dados reais de mercado e veja os resultados em tempo real",
-              },
-              {
-                icon: Shield,
-                title: "3. Analise",
-                description: "Analise os resultados e otimize sua estratégia antes de investir dinheiro real",
-              },
-            ].map((feature, index) => (
-              <Card key={index} className="text-center hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="mx-auto w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                    <feature.icon className="h-6 w-6 text-primary" />
+          {/* Sidebar - Right */}
+          <div className="space-y-6">
+            
+            {/* Multi-currency account */}
+            <Card className="picnic-card">
+              <CardHeader className="pb-4">
+                <div className="flex items-center space-x-2">
+                  <DollarSign className="h-5 w-5 picnic-text-light" />
+                  <CardTitle className="text-lg font-semibold picnic-text-dark">Multi-currency account</CardTitle>
+                </div>
+                <CardDescription className="text-sm picnic-text-light">
+                  Available to buy cryptocurrencies and fiat operations.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                      <span className="text-xs font-bold picnic-green">R$</span>
+                    </div>
+                    <span className="text-sm picnic-text">Real</span>
                   </div>
-                  <CardTitle className="text-xl">{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-base">{feature.description}</CardDescription>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+                  <span className="text-sm font-semibold picnic-text-dark">R$ 0.00</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                      <span className="text-xs font-bold text-blue-600">$</span>
+                    </div>
+                    <span className="text-sm picnic-text">Dollar</span>
+                  </div>
+                  <span className="text-sm font-semibold picnic-text-dark">US$ 0.00</span>
+                </div>
+              </CardContent>
+            </Card>
 
-      {/* CTA Section */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-6">Pronto para Começar?</h2>
-          <p className="text-xl text-slate-600 mb-8 max-w-2xl mx-auto">
-            Comece a simular suas estratégias de investimento hoje mesmo. É gratuito e não requer cartão de crédito.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" asChild className="text-lg px-8">
-              <Link href="/dashboard">
-                Começar Agora
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
-            <Button variant="outline" size="lg" asChild className="text-lg px-8 bg-transparent">
-              <Link href="/market-analysis">Ver Demo</Link>
-            </Button>
+            {/* Let your money work for you */}
+            <Card className="picnic-card">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <TrendingUp className="h-6 w-6 picnic-green" />
+                    <div>
+                      <CardTitle className="text-lg font-semibold picnic-text-dark">
+                        Let your money work for you
+                      </CardTitle>
+                      <p className="text-sm picnic-text-light">
+                        Earn 4.64% annual yields investing on Simple Earn
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-5 w-5 text-gray-400" />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Bitcoin Withdrawal */}
+            <Card className="picnic-card">
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <CardTitle className="text-lg font-semibold picnic-text-dark mb-2">
+                      Bitcoin Withdrawal
+                    </CardTitle>
+                    <p className="text-sm picnic-text-light mb-3">
+                      Send Bitcoin to your native wallet at the lowest rate in the market.
+                    </p>
+                    <Button variant="link" className="picnic-green hover:text-green-700 p-0 h-auto">
+                      earn more
+                    </Button>
+                  </div>
+                  <div className="ml-4">
+                    <div className="relative">
+                      <Coins className="h-8 w-8 text-yellow-500" />
+                      <Leaf className="h-4 w-4 text-green-500 absolute -top-1 -right-1" />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
-      </section>
+      </div>
+
+      {/* Chat Support */}
+      <div className="fixed bottom-6 right-6">
+        <Button className="picnic-button rounded-full w-12 h-12 p-0 shadow-lg">
+          <Eye className="h-5 w-5" />
+        </Button>
+      </div>
     </div>
   )
 }
