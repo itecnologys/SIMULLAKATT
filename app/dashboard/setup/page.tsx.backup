@@ -13,7 +13,6 @@ import { useToast } from "@/components/ui/use-toast"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { saveSimulation, saveSetup } from "@/lib/simulation-service"
 
-import { SavedSetupsModal } from "@/components/saved-setups-modal"
 export default function SetupPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -232,37 +231,7 @@ export default function SetupPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">Configuração da Simulação</h2>
-          <p className="text-muted-foreground mt-1">
-            Configure os parâmetros para sua simulação de investimento
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <SavedSetupsModal onSetupSelect={(setup) => {
-            setSetupName(setup.name || "")
-            setInitialInvestment(setup.initialInvestment.toString())
-            setCurrency(setup.currency || "EUR")
-            setEntryFee(setup.entryFee.toString())
-            setExitFee(setup.exitFee.toString())
-            setProfitRate(setup.profitRate.toString())
-            setDailyFee(setup.dailyFee.toString())
-            setOperationsPerDay(setup.operationsPerDay.toString())
-            setProjectionMonths(setup.projectionMonths.toString())
-            setIncludeWeekends(setup.includeWeekends || false)
-          }} onNewSetup={() => {
-            setSetupName("")
-            setInitialInvestment("10000")
-            setCurrency("EUR")
-            setEntryFee("0.1")
-            setExitFee("0.1")
-            setProfitRate("2.5")
-            setDailyFee("0.01")
-            setOperationsPerDay("3")
-            setProjectionMonths("12")
-            setIncludeWeekends(false)
-          }} />
-        </div>
+        <h2 className="text-3xl font-bold tracking-tight">Configuração da Simulação</h2>
       </div>
 
       {error && (
