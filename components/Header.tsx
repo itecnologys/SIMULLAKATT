@@ -12,6 +12,7 @@ export default function Header() {
 
   const navigationItems = [
     { name: 'My account', href: '/overview' },
+    { name: 'Simulação', href: '/simulate' },
     { name: 'Dashboard', href: '/dashboard' },
     { name: 'SMLKCARD', href: '/card', badge: 'new' },
     { name: 'Reports', href: '/reports' },
