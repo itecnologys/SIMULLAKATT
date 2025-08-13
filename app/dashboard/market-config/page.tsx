@@ -6,7 +6,7 @@ export default function MarketConfigPage() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Configuração de Dados de Mercado</h1>
         <p className="text-muted-foreground">
-          Configure as APIs para obter dados financeiros em tempo real para a plataforma SIMULLAKT.
+          Configure as APIs para obter dados financeiros em tempo real para a plataforma SIMULAK.
         </p>
       </div>
 

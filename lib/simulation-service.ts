@@ -100,7 +100,7 @@ function getStoredSimulations(): SimulationResult[] {
   if (typeof window === "undefined") return []
 
   try {
-    const stored = localStorage.getItem("simullakt_simulations")
+    const stored = localStorage.getItem("simulak_simulations")
     return stored ? JSON.parse(stored) : []
   } catch (error) {
     return []
@@ -111,7 +111,7 @@ function getStoredSetups(): SimulationSetup[] {
   if (typeof window === "undefined") return []
 
   try {
-    const stored = localStorage.getItem("simullakt_setups")
+    const stored = localStorage.getItem("simulak_setups")
     return stored ? JSON.parse(stored) : []
   } catch (error) {
     return []
@@ -173,7 +173,7 @@ export async function saveSimulation(
   // Save to localStorage
   try {
     if (typeof window !== "undefined") {
-      localStorage.setItem("simullakt_simulations", JSON.stringify(simulations))
+      localStorage.setItem("simulak_simulations", JSON.stringify(simulations))
     }
   } catch (error) {
     // Handle error silently
@@ -245,8 +245,8 @@ export async function saveSetup(
 
     // Save to localStorage
     if (typeof window !== "undefined") {
-      localStorage.setItem("simullakt_setups", JSON.stringify(setups))
-      localStorage.setItem("simullakt_current_setup", JSON.stringify(setupWithTimestamp))
+      localStorage.setItem("simulak_setups", JSON.stringify(setups))
+      localStorage.setItem("simulak_current_setup", JSON.stringify(setupWithTimestamp))
     }
 
     return true
@@ -260,7 +260,7 @@ export async function loadCurrentSetup(): Promise<SimulationSetup | null> {
   if (typeof window === "undefined") return null
 
   try {
-    const setup = localStorage.getItem("simullakt_current_setup")
+    const setup = localStorage.getItem("simulak_current_setup")
     return setup ? JSON.parse(setup) : null
   } catch (error) {
     return null
@@ -326,7 +326,7 @@ export async function addTransaction(
   // Save to localStorage
   try {
     if (typeof window !== "undefined") {
-      localStorage.setItem("simullakt_simulations", JSON.stringify(simulations))
+      localStorage.setItem("simulak_simulations", JSON.stringify(simulations))
     }
   } catch (error) {
     // Handle error silently
@@ -519,7 +519,7 @@ function updateSimulationTotals(simulation: SimulationResult) {
 export async function clearSimulations(): Promise<boolean> {
   try {
     if (typeof window !== "undefined") {
-      localStorage.removeItem("simullakt_simulations")
+      localStorage.removeItem("simulak_simulations")
     }
     return true
   } catch (error) {

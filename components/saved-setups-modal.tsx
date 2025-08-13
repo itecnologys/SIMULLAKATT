@@ -96,7 +96,7 @@ export function SavedSetupsModal({ onSetupSelect, onNewSetup }: SavedSetupsModal
       const updatedSetups = currentSetups.filter((setup) => setup.id !== id)
 
       if (typeof window !== "undefined") {
-        localStorage.setItem("simullakt_setups", JSON.stringify(updatedSetups))
+        localStorage.setItem("simulak_setups", JSON.stringify(updatedSetups))
       }
 
       setSavedSetups(updatedSetups)
@@ -134,7 +134,7 @@ export function SavedSetupsModal({ onSetupSelect, onNewSetup }: SavedSetupsModal
     const updatedSetups = [...savedSetups, duplicatedSetup]
 
     if (typeof window !== "undefined") {
-      localStorage.setItem("simullakt_setups", JSON.stringify(updatedSetups))
+      localStorage.setItem("simulak_setups", JSON.stringify(updatedSetups))
     }
 
     setSavedSetups(updatedSetups)

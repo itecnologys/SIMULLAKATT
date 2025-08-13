@@ -6,9 +6,9 @@ import Header from '@/components/Header'
 import { SimulationProvider } from '@/contexts/SimulationContext'
 
 export const metadata: Metadata = {
-  title: 'SIMULLAKT - Simulação Financeira Avançada',
+  title: 'SIMULAK - Simulação Financeira Avançada',
   description: 'Plataforma avançada de simulação financeira com análise de mercado e projeções de investimento',
-  generator: 'SIMULLAKT v2.0',
+  generator: 'SIMULAK v2.0',
 }
 
 export default function RootLayout({

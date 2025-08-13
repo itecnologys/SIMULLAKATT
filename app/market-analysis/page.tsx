@@ -215,7 +215,7 @@ export default function MarketAnalysisPage() {
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-2">
             <div>
               <div className="text-sm text-muted-foreground">
-                SIMULLAKT - Dados em tempo real {assetData?.source ? `(${assetData.source})` : ""}
+                SIMULAK - Dados em tempo real {assetData?.source ? `(${assetData.source})` : ""}
               </div>
               <div className="flex items-center gap-2">
                 <h2 className="text-3xl font-bold">{selectedAsset}</h2>

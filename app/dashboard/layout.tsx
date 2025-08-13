@@ -30,7 +30,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <div className={`bg-card border-r ${isSidebarOpen ? "w-64" : "w-0 -ml-64"} transition-all duration-300 md:ml-0`}>
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between h-16 px-4 border-b">
-            <h1 className="text-xl font-bold">SIMULLAKT</h1>
+            <h1 className="text-xl font-bold">SIMULAK</h1>
           </div>
 
           <div className="flex-1 overflow-auto py-4">
@@ -146,7 +146,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </Button>
 
           <div className="flex items-center">
-            <h1 className="text-xl font-bold">SIMULLAKT</h1>
+            <h1 className="text-xl font-bold">SIMULAK</h1>
           </div>
 
           <div className="flex items-center ml-auto space-x-4">

@@ -1,4 +1,4 @@
-# 🚀 SIMULLAKT v2.0
+# 🚀 SIMULAK v2.0
 
 **Sistema de Simulação Financeira Avançado**
 
@@ -24,7 +24,7 @@
 
 ## 🎯 Sobre o Projeto
 
-**SIMULLAKT** é uma plataforma avançada de simulação financeira que permite aos usuários configurar, executar e analisar estratégias de investimento com precisão matemática. O sistema oferece ferramentas completas para análise de mercado, projeções de longo prazo e relatórios detalhados.
+**SIMULAK** é uma plataforma avançada de simulação financeira que permite aos usuários configurar, executar e analisar estratégias de investimento com precisão matemática. O sistema oferece ferramentas completas para análise de mercado, projeções de longo prazo e relatórios detalhados.
 
 ### 🌟 Características Principais
 
@@ -121,7 +121,7 @@ cp .env.example .env.local
 Edite o arquivo `.env.local`:
 ```env
 # Banco de Dados
-DATABASE_URL="postgresql://user:password@localhost:5432/simullakt"
+DATABASE_URL="postgresql://user:password@localhost:5432/simulak"
 
 # Next.js
 NEXTAUTH_SECRET="your-secret-key"
@@ -269,7 +269,7 @@ npm install -g pm2
 npm run build
 
 # Inicie com PM2
-pm2 start npm --name "simullakt" -- start
+pm2 start npm --name "simulak" -- start
 
 # Configure para iniciar com o sistema
 pm2 startup
@@ -294,7 +294,7 @@ CMD ["npm", "start"]
 ### Variáveis de Ambiente de Produção
 ```env
 NODE_ENV=production
-DATABASE_URL="postgresql://user:password@host:5432/simullakt"
+DATABASE_URL="postgresql://user:password@host:5432/simulak"
 NEXTAUTH_SECRET="your-production-secret"
 NEXTAUTH_URL="https://your-domain.com"
 ```

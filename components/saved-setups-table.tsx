@@ -74,7 +74,7 @@ export function SavedSetupsTable() {
 
       // Salvar configurações atualizadas
       if (typeof window !== "undefined") {
-        localStorage.setItem("simullakt_setups", JSON.stringify(updatedSetups))
+        localStorage.setItem("simulak_setups", JSON.stringify(updatedSetups))
       }
 
       // Atualizar estado
@@ -100,7 +100,7 @@ export function SavedSetupsTable() {
   const handleEditSetup = (setup: SimulationSetup) => {
     // Salvar configuração atual para edição
     if (typeof window !== "undefined") {
-      localStorage.setItem("simullakt_current_setup", JSON.stringify(setup))
+      localStorage.setItem("simulak_current_setup", JSON.stringify(setup))
     }
 
     // Redirecionar para a página de configuração
@@ -119,7 +119,7 @@ export function SavedSetupsTable() {
 
     // Salvar configurações atualizadas
     if (typeof window !== "undefined") {
-      localStorage.setItem("simullakt_setups", JSON.stringify(updatedSetups))
+      localStorage.setItem("simulak_setups", JSON.stringify(updatedSetups))
     }
 
     // Atualizar estado
@@ -134,7 +134,7 @@ export function SavedSetupsTable() {
   const handleRunSimulation = (setup: SimulationSetup) => {
     // Salvar configuração atual
     if (typeof window !== "undefined") {
-      localStorage.setItem("simullakt_current_setup", JSON.stringify(setup))
+      localStorage.setItem("simulak_current_setup", JSON.stringify(setup))
     }
 
     // Redirecionar para a página de simulação
