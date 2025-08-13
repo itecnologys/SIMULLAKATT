@@ -1,6 +1,6 @@
 {
   "name": "simulak",
-  "version": "0.1.0",
+  "version": "2.003",
   "private": true,
   "scripts": {
     "build": "next build",

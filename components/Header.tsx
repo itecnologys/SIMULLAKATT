@@ -11,8 +11,9 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const navigationItems = [
-    { name: 'My account', href: '/dashboard' },
-    { name: 'Card', href: '/card', badge: 'new' },
+    { name: 'My account', href: '/overview' },
+    { name: 'Dashboard', href: '/dashboard' },
+    { name: 'SMLKCARD', href: '/card', badge: 'new' },
     { name: 'Reports', href: '/reports' },
     { name: 'Operações', href: '/operations' },
     { name: 'Swap', href: '/swap' },

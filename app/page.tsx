@@ -65,6 +65,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
@@ -334,29 +335,7 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            {/* Picnic Card Section - Mantido Exatamente como no Picnic */}
-            <Card className="bg-green-50 border-green-200 rounded-lg">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <CreditCard className="h-6 w-6 text-green-600" />
-                    <div>
-                      <CardTitle className="text-lg font-semibold text-gray-900">Picnic Card</CardTitle>
-                      <div className="text-sm text-gray-600">Card balance</div>
-                      <div className="text-xl font-bold text-green-600">€ 4.68</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-4">
-                    <Button variant="link" className="text-green-600 hover:text-green-700 p-0">
-                      Add funds
-                    </Button>
-                    <div className="bg-black text-white text-xs px-2 py-1 rounded">
-                      VISA
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+
 
             {/* Cryptocurrencies Section - Mantido Exatamente como no Picnic */}
             <Card className="bg-white shadow-sm border border-gray-100 rounded-lg">
@@ -413,6 +392,33 @@ export default function HomePage() {
 
           {/* Sidebar - Right - Mantido Exatamente como no Picnic */}
           <div className="space-y-6">
+            
+            {/* APPC CARD SMLK - Movido para Sidebar Direita */}
+            <Card className="bg-green-50 shadow-sm border border-gray-100 rounded-lg">
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">APPC CARD SMLK</h3>
+                    <div className="flex items-center space-x-2 mb-2">
+                      <div className="w-4 h-4 border border-gray-300 rounded-sm"></div>
+                      <span className="text-sm text-gray-600">Card balance</span>
+                    </div>
+                    <div className="text-2xl font-bold text-green-600 mb-4">
+                      {simulationData.currency === "EUR" ? "€" : "$"} {accumulatedValues.dailyAccumulated.toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end space-y-2">
+                    <span className="text-sm font-medium text-green-600">Add funds</span>
+                    <div className="bg-black text-white text-xs px-2 py-1 rounded font-bold">
+                      VISA
+                    </div>
+                    <div className="bg-purple-600 text-white text-xs px-2 py-1 rounded font-bold">
+                      LIGHTNING
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
             
             {/* Card de Contas de Remuneração - NOVO LOCAL */}
             <Card className="bg-white shadow-sm border border-gray-100 rounded-lg">
