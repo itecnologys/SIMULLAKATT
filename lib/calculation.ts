@@ -61,6 +61,12 @@ export function calculateOperation(
   }
 }
 
+export function generateOperationId(date: Date, operationNumber: number): string {
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+  return `M${day}D${operationNumber}`
+}
+
 /**
  * Calculate daily operations with daily fee
  * @param initialAmount - Starting amount for the day
@@ -73,52 +79,49 @@ export function calculateOperation(
  * @returns Object containing all calculation details
  */
 export function calculateDailyOperations(
+  startDate: Date,
   initialAmount: number,
   entryFeePercent: number,
   profitPercent: number,
   exitFeePercent: number,
   dailyFeePercent: number,
   operationsCount: number,
-  withdrawalPercent = 0.05,
+  includeWeekends: boolean = true
 ) {
   let currentAmount = initialAmount
   const operations = []
-  let totalTransacted = 0
-  let totalWithdrawals = 0
-
-  // Perform each operation
-  for (let i = 0; i < operationsCount; i++) {
-    // Cada operação usa o valor final da anterior (após retirada) como inicial
-    const operation = calculateOperation(
-      currentAmount,
-      entryFeePercent,
-      profitPercent,
-      exitFeePercent,
-      withdrawalPercent,
-    )
-
-    operations.push(operation)
-    totalTransacted += operation.initialAmount
-    totalWithdrawals += operation.withdrawal
-
-    // Usar o valor após a retirada para a próxima operação
-    currentAmount = operation.finalAmountAfterWithdrawal
+  
+  // Gerar operações para o dia
+  for (let i = 1; i <= operationsCount; i++) {
+    const entryFeeAmount = currentAmount * (entryFeePercent / 100)
+    const amountAfterEntryFee = currentAmount - entryFeeAmount
+    const profit = amountAfterEntryFee * (profitPercent / 100)
+    const amountAfterProfit = amountAfterEntryFee + profit
+    const exitFeeAmount = amountAfterProfit * (exitFeePercent / 100)
+    const finalAmount = amountAfterProfit - exitFeeAmount
+    
+    operations.push({
+      id: generateOperationId(startDate, i),
+      date: startDate.toISOString(),
+      initialAmount: currentAmount,
+      entryFee: entryFeeAmount,
+      profit: profit,
+      exitFee: exitFeeAmount,
+      finalAmount: finalAmount,
+      status: 'Concluída'
+    })
+    
+    currentAmount = finalAmount
   }
-
-  // Calculate daily fee
-  const dailyFeeRate = dailyFeePercent / 100
-  const dailyFee = totalTransacted * dailyFeeRate
-
-  // Final amount after daily fee
-  const finalDailyAmount = currentAmount - dailyFee
-
+  
+  // Aplicar taxa diária
+  const dailyFeeAmount = currentAmount * (dailyFeePercent / 100)
+  currentAmount = currentAmount - dailyFeeAmount
+  
   return {
-    initialAmount,
     operations,
-    totalTransacted,
-    totalWithdrawals,
-    dailyFee,
-    finalDailyAmount,
+    dailyFee: dailyFeeAmount,
+    finalAmount: currentAmount
   }
 }
 
@@ -168,30 +171,31 @@ export function calculateMonthlyProjection(
     }
 
     const dailyResult = calculateDailyOperations(
+      date, // Pass the date object directly
       currentAmount,
       entryFeePercent,
       profitPercent,
       exitFeePercent,
       dailyFeePercent,
       operationsCount,
-      withdrawalPercent,
+      includeWeekends,
     )
 
-    totalWithdrawals += dailyResult.totalWithdrawals
+    totalWithdrawals += dailyResult.dailyFee // Assuming dailyFee is the total withdrawal for the day
 
     days.push({
       day: i + 1,
       date,
       isWeekend: false,
       initialAmount: currentAmount,
-      finalAmount: dailyResult.finalDailyAmount,
+      finalAmount: dailyResult.finalAmount,
       operations: dailyResult.operations,
-      totalTransacted: dailyResult.totalTransacted,
+      totalTransacted: 0, // No totalTransacted in this simplified version
       dailyFee: dailyResult.dailyFee,
-      totalWithdrawals: dailyResult.totalWithdrawals,
+      totalWithdrawals: dailyResult.dailyFee, // Assuming dailyFee is the total withdrawal for the day
     })
 
-    currentAmount = dailyResult.finalDailyAmount
+    currentAmount = dailyResult.finalAmount
   }
 
   const withdrawals = {

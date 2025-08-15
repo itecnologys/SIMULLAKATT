@@ -1,0 +1,26 @@
+🧹 === COMANDOS PARA LIMPAR CACHE ===
+
+1️⃣ Parar processos Next.js:
+pkill -f "next"
+
+2️⃣ Navegar para o diretório:
+cd SIMULAK
+
+3️⃣ Limpar cache do Next.js:
+rm -rf .next
+rm -rf node_modules/.cache
+npm cache clean --force
+
+4️⃣ Reinstalar dependências:
+npm install --legacy-peer-deps
+
+5️⃣ Fazer build limpo:
+npm run build
+
+6️⃣ Iniciar servidor:
+PORT=3001 npm run start
+
+✅ Após executar estes comandos, o Market Ticker Bloomberg estará disponível em:
+🌐 https://simulak.iofficebooks.com/dashboard
+
+📊 O DashboardMarketTicker com APIs em tempo real estará ativo! 

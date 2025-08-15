@@ -1,0 +1,116 @@
+/* Yahoo Finance Specific Styles */
+.quote-lookup {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 13px;
+}
+
+.quote-lookup input {
+  font-size: 14px;
+  height: 36px;
+  padding-left: 36px;
+  border-radius: 18px;
+  border: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+}
+
+.quote-lookup input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+.market-status {
+  font-size: 12px;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.quote-card {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f3f4f6;
+  transition: background-color 0.2s;
+}
+
+.quote-card:hover {
+  background-color: #f9fafb;
+}
+
+.quote-card .symbol {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.quote-card .name {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.quote-card .price {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  text-align: right;
+}
+
+.quote-card .change {
+  font-size: 12px;
+  text-align: right;
+}
+
+.quote-card .change.positive {
+  color: #059669;
+}
+
+.quote-card .change.negative {
+  color: #dc2626;
+}
+
+.mini-chart {
+  width: 80px;
+  height: 32px;
+  border-radius: 2px;
+}
+
+.mini-chart.positive {
+  background: linear-gradient(180deg, #dcfce7 0%, #bbf7d0 100%);
+}
+
+.mini-chart.negative {
+  background: linear-gradient(180deg, #fee2e2 0%, #fecaca 100%);
+}
+
+.market-section {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+.market-section-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.market-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.market-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 24px;
+}
+
+@media (max-width: 768px) {
+  .market-grid {
+    grid-template-columns: 1fr;
+  }
+} 

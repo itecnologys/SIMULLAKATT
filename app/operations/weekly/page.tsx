@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useSimulation } from "@/contexts/SimulationContext"
 import OperationsNav from "@/components/OperationsNav"
+import { Label } from "@/components/ui/label"
 
 interface WeeklyCalculation {
   weekNumber: number
@@ -29,7 +30,8 @@ export default function WeeklyCalculationsPage() {
 
   useEffect(() => {
     if (simulationResult) {
-      generateWeeklyCalculations()
+      const calculations = generateWeeklyCalculations()
+      setWeeklyCalculations(calculations)
     }
   }, [simulationResult, simulationData])
 
@@ -38,31 +40,91 @@ export default function WeeklyCalculationsPage() {
     let currentValue = Number.parseFloat(simulationData.initialInvestment)
     const totalMonths = Number.parseInt(simulationData.projectionPeriod)
     
-    let weekNumber = 1
     let weekStartDate: Date | null = null
-    let weekInitialValue = currentValue
+    let weekStartValue = currentValue
     let weekTotalEntryFees = 0
     let weekTotalProfit = 0
     let weekTotalExitFees = 0
     let weekTotalDailyRates = 0
     let weekTotalDepositRates = 0
+    let weekOperationsCount = 0
     let weekDaysCount = 0
     
-    for (let month = 1; month <= totalMonths; month++) {
-      const date = new Date(Number.parseInt(simulationData.startYear), Number.parseInt(simulationData.startMonth) - 1 + month, Number.parseInt(simulationData.startDay))
+    const finalizeWeek = () => {
+      if (weekStartDate && weekDaysCount > 0) {
+        const weekEndDate = new Date(weekStartDate)
+        weekEndDate.setDate(weekEndDate.getDate() + weekDaysCount - 1)
+        
+        calculations.push({
+          weekNumber: calculations.length + 1, // Assign a week number based on the order of push
+          startDate: `${weekStartDate.getDate().toString().padStart(2, '0')}/${(weekStartDate.getMonth() + 1).toString().padStart(2, '0')}`,
+          endDate: `${weekEndDate.getDate().toString().padStart(2, '0')}/${(weekEndDate.getMonth() + 1).toString().padStart(2, '0')}`,
+          daysCount: weekDaysCount,
+          operationsCount: weekOperationsCount,
+          initialValue: weekStartValue,
+          totalEntryFees: weekTotalEntryFees,
+          totalProfit: weekTotalProfit,
+          totalExitFees: weekTotalExitFees,
+          totalDailyRates: weekTotalDailyRates,
+          totalDepositRates: weekTotalDepositRates,
+          netProfit: weekTotalProfit - weekTotalEntryFees - weekTotalExitFees - weekTotalDailyRates,
+          finalValue: currentValue,
+          weeklyGrowth: ((currentValue - weekStartValue) / weekStartValue) * 100
+        })
+      }
+      
+      // Reset week counters
+      weekStartDate = null
+      weekStartValue = currentValue
+      weekTotalEntryFees = 0
+      weekTotalProfit = 0
+      weekTotalExitFees = 0
+      weekTotalDailyRates = 0
+      weekTotalDepositRates = 0
+      weekOperationsCount = 0
+      weekDaysCount = 0
+    }
+    
+    for (let monthOffset = 0; monthOffset < totalMonths; monthOffset++) {
+      const date = new Date(
+        Number.parseInt(simulationData.startYear),
+        Number.parseInt(simulationData.startMonth) - 1,
+        Number.parseInt(simulationData.startDay)
+      )
+      date.setMonth(date.getMonth() + monthOffset)
       
       const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
       const operationsPerDay = Number.parseInt(simulationData.operationsPerDay)
       
-      for (let day = 1; day <= daysInMonth; day++) {
+      // Determinar o dia inicial para este mês
+      let startDay = 1
+      if (monthOffset === 0) {  // Se for o primeiro mês
+        startDay = Number.parseInt(simulationData.startDay)  // Começar no dia selecionado
+      }
+      
+      for (let day = startDay; day <= daysInMonth; day++) {
         const currentDate = new Date(date.getFullYear(), date.getMonth(), day)
-        const isWeekend = currentDate.getDay() === 0 || currentDate.getDay() === 6
+        const dayOfWeek = currentDate.getDay() // 0 = Domingo, 1-5 = Seg-Sex, 6 = Sábado
+        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
         
-        if (isWeekend && !simulationData.includeWeekends) continue
+        // Pular fins de semana se não incluídos
+        if (isWeekend && !simulationData.includeWeekends) {
+          // Se estávamos no meio de uma semana, finalizar a semana atual
+          if (weekStartDate !== null) {
+            finalizeWeek()
+          }
+          continue
+        }
         
-        // Iniciar nova semana se necessário
-        if (weekStartDate === null) {
+        // Iniciar nova semana se:
+        // 1. Não temos uma semana em andamento, ou
+        // 2. É segunda-feira (dayOfWeek === 1)
+        if (weekStartDate === null || dayOfWeek === 1) {
+          if (weekStartDate !== null) {
+            finalizeWeek()
+          }
           weekStartDate = new Date(currentDate)
+          weekStartValue = currentValue
         }
         
         weekDaysCount++
@@ -80,6 +142,7 @@ export default function WeeklyCalculationsPage() {
           weekTotalProfit += profit
           weekTotalExitFees += exitFeeAmount
           currentValue = finalValue
+          weekOperationsCount++
         }
         
         // Taxa diária
@@ -91,43 +154,19 @@ export default function WeeklyCalculationsPage() {
         const depositRateAmount = dailyRateAmount * (Number.parseFloat(simulationData.depositRate) / 100)
         weekTotalDepositRates += depositRateAmount
         
-        // Finalizar semana se completou 7 dias ou é o último dia
-        if (weekDaysCount >= 7 || (month === totalMonths && day === daysInMonth)) {
-          const weekEndDate = new Date(currentDate)
-          const weeklyGrowth = ((currentValue - weekInitialValue) / weekInitialValue) * 100
-          
-          calculations.push({
-            weekNumber,
-            startDate: `${weekStartDate!.getDate().toString().padStart(2, '0')}/${(weekStartDate!.getMonth() + 1).toString().padStart(2, '0')}`,
-            endDate: `${weekEndDate.getDate().toString().padStart(2, '0')}/${(weekEndDate.getMonth() + 1).toString().padStart(2, '0')}`,
-            daysCount: weekDaysCount,
-            operationsCount: weekDaysCount * Number.parseInt(simulationData.operationsPerDay),
-            initialValue: weekInitialValue,
-            totalEntryFees: weekTotalEntryFees,
-            totalProfit: weekTotalProfit,
-            totalExitFees: weekTotalExitFees,
-            totalDailyRates: weekTotalDailyRates,
-            totalDepositRates: weekTotalDepositRates,
-            netProfit: weekTotalProfit - weekTotalEntryFees - weekTotalExitFees - weekTotalDailyRates,
-            finalValue: currentValue,
-            weeklyGrowth
-          })
-          
-          // Resetar para próxima semana
-          weekNumber++
-          weekStartDate = null
-          weekInitialValue = currentValue
-          weekTotalEntryFees = 0
-          weekTotalProfit = 0
-          weekTotalExitFees = 0
-          weekTotalDailyRates = 0
-          weekTotalDepositRates = 0
-          weekDaysCount = 0
+        // Se é sexta-feira e não incluímos fins de semana, finalizar a semana
+        if (dayOfWeek === 5 && !simulationData.includeWeekends) {
+          finalizeWeek()
         }
       }
     }
     
-    setWeeklyCalculations(calculations)
+    // Finalizar última semana se necessário
+    if (weekStartDate !== null) {
+      finalizeWeek()
+    }
+    
+    return calculations
   }
 
   const formatCurrency = (value: number) => {
@@ -147,110 +186,86 @@ export default function WeeklyCalculationsPage() {
     <div className="min-h-screen bg-gray-50">
       <OperationsNav />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Cálculos Semanais</h1>
-          <p className="text-gray-600 mt-2">
-            Resumo de operações por semana - {weeklyCalculations.length} semanas calculadas
-          </p>
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-2xl font-bold mb-6">Cálculos Semanais</h1>
+        
+        <div className="grid gap-6">
+          {weeklyCalculations.map((week) => (
+            <Card key={week.weekNumber} className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold">
+                    Semana {week.weekNumber}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    {week.startDate} até {week.endDate}
+                  </p>
+                </div>
+                <Badge variant={week.daysCount === 5 ? "default" : "secondary"}>
+                  {week.daysCount} {week.daysCount === 1 ? "dia" : "dias"}
+                </Badge>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                <div>
+                  <Label>Operações</Label>
+                  <p className="text-lg font-medium">{week.operationsCount}</p>
+                </div>
+                <div>
+                  <Label>Valor Inicial</Label>
+                  <p className="text-lg font-medium">
+                    {simulationData.currency === "EUR" ? "€" : "$"} {week.initialValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  </p>
+                </div>
+                <div>
+                  <Label>Valor Final</Label>
+                  <p className="text-lg font-medium">
+                    {simulationData.currency === "EUR" ? "€" : "$"} {week.finalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  </p>
+                </div>
+                <div>
+                  <Label>Crescimento</Label>
+                  <p className={`text-lg font-medium ${week.weeklyGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {week.weeklyGrowth >= 0 ? '+' : ''}{week.weeklyGrowth.toFixed(2)}%
+                  </p>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div>
+                  <Label>Taxa de Entrada</Label>
+                  <p className="text-sm font-medium text-red-600">
+                    - {simulationData.currency === "EUR" ? "€" : "$"} {week.totalEntryFees.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  </p>
+                </div>
+                <div>
+                  <Label>Lucro Bruto</Label>
+                  <p className="text-sm font-medium text-green-600">
+                    + {simulationData.currency === "EUR" ? "€" : "$"} {week.totalProfit.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  </p>
+                </div>
+                <div>
+                  <Label>Taxa de Saída</Label>
+                  <p className="text-sm font-medium text-red-600">
+                    - {simulationData.currency === "EUR" ? "€" : "$"} {week.totalExitFees.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  </p>
+                </div>
+                <div>
+                  <Label>Taxa Diária</Label>
+                  <p className="text-sm font-medium text-red-600">
+                    - {simulationData.currency === "EUR" ? "€" : "$"} {week.totalDailyRates.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  </p>
+                </div>
+                <div>
+                  <Label>Taxa de Depósito</Label>
+                  <p className="text-sm font-medium text-blue-600">
+                    {simulationData.currency === "EUR" ? "€" : "$"} {week.totalDepositRates.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  </p>
+                </div>
+              </div>
+            </Card>
+          ))}
         </div>
-
-        <Card>
-          <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Semana
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Período
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Dias
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Operações
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Valor Inicial
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Taxas Entrada
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Lucro Total
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Taxas Saída
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Taxas Diárias
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Taxas Depósito
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Lucro Líquido
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Valor Final
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Crescimento
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {weeklyCalculations.map((calculation) => (
-                    <tr key={calculation.weekNumber} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        Semana {calculation.weekNumber}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {calculation.startDate} - {calculation.endDate}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {calculation.daysCount}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {calculation.operationsCount}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {formatCurrency(calculation.initialValue)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600">
-                        -{formatCurrency(calculation.totalEntryFees)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">
-                        +{formatCurrency(calculation.totalProfit)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600">
-                        -{formatCurrency(calculation.totalExitFees)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600">
-                        -{formatCurrency(calculation.totalDailyRates)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600">
-                        {formatCurrency(calculation.totalDepositRates)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
-                        +{formatCurrency(calculation.netProfit)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {formatCurrency(calculation.finalValue)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
-                        {formatPercentage(calculation.weeklyGrowth)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   )

@@ -35,13 +35,24 @@ export default function DailyCalculationsPage() {
     let currentValue = Number.parseFloat(simulationData.initialInvestment)
     const totalMonths = Number.parseInt(simulationData.projectionPeriod)
     
-    for (let month = 1; month <= totalMonths; month++) {
-      const date = new Date(Number.parseInt(simulationData.startYear), Number.parseInt(simulationData.startMonth) - 1 + month, Number.parseInt(simulationData.startDay))
+    for (let monthOffset = 0; monthOffset < totalMonths; monthOffset++) {
+      const date = new Date(
+        Number.parseInt(simulationData.startYear),
+        Number.parseInt(simulationData.startMonth) - 1,  // Mês começa em 0 (janeiro = 0)
+        Number.parseInt(simulationData.startDay)
+      )
+      date.setMonth(date.getMonth() + monthOffset)
       
       const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
       const operationsPerDay = Number.parseInt(simulationData.operationsPerDay)
       
-      for (let day = 1; day <= daysInMonth; day++) {
+      // Determinar o dia inicial para este mês
+      let startDay = 1
+      if (monthOffset === 0) {  // Se for o primeiro mês
+        startDay = Number.parseInt(simulationData.startDay)  // Começar no dia selecionado
+      }
+      
+      for (let day = startDay; day <= daysInMonth; day++) {
         const currentDate = new Date(date.getFullYear(), date.getMonth(), day)
         const isWeekend = currentDate.getDay() === 0 || currentDate.getDay() === 6
         

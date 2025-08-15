@@ -39,28 +39,42 @@ export default function MonthlyCalculationsPage() {
     let currentValue = Number.parseFloat(simulationData.initialInvestment)
     const totalMonths = Number.parseInt(simulationData.projectionPeriod)
     
-    const monthNames = [
-      'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-      'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-    ]
+    // Criar data inicial
+    const startDate = new Date(
+      Number.parseInt(simulationData.startYear),
+      Number.parseInt(simulationData.startMonth) - 1,
+      Number.parseInt(simulationData.startDay)
+    )
     
-    for (let month = 1; month <= totalMonths; month++) {
-      const date = new Date(Number.parseInt(simulationData.startYear), Number.parseInt(simulationData.startMonth) - 1 + month, Number.parseInt(simulationData.startDay))
+    // Ajustar para começar do mês inicial
+    for (let monthOffset = 0; monthOffset <= totalMonths; monthOffset++) {
+      const currentDate = new Date(startDate)
+      currentDate.setMonth(startDate.getMonth() + monthOffset)
       
-      const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
+      const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate()
       const operationsPerDay = Number.parseInt(simulationData.operationsPerDay)
       
-      const monthInitialValue = currentValue
       let monthTotalEntryFees = 0
       let monthTotalProfit = 0
       let monthTotalExitFees = 0
       let monthTotalDailyRates = 0
       let monthTotalDepositRates = 0
       let monthDaysCount = 0
+      let monthOperationsCount = 0
+      const monthInitialValue = currentValue
       
-      for (let day = 1; day <= daysInMonth; day++) {
-        const currentDate = new Date(date.getFullYear(), date.getMonth(), day)
-        const isWeekend = currentDate.getDay() === 0 || currentDate.getDay() === 6
+      // Determinar o dia inicial e final para este mês
+      let startDay = 1
+      let endDay = daysInMonth
+      
+      // Se for o primeiro mês, começar no dia selecionado
+      if (monthOffset === 0) {
+        startDay = Number.parseInt(simulationData.startDay)
+      }
+      
+      for (let day = startDay; day <= endDay; day++) {
+        const dayDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
+        const isWeekend = dayDate.getDay() === 0 || dayDate.getDay() === 6
         
         if (isWeekend && !simulationData.includeWeekends) continue
         
@@ -68,6 +82,7 @@ export default function MonthlyCalculationsPage() {
         
         // Calcular operações do dia
         for (let op = 1; op <= operationsPerDay; op++) {
+          monthOperationsCount++
           const entryFeeAmount = currentValue * (Number.parseFloat(simulationData.entryRate) / 100)
           const amountAfterEntryFee = currentValue - entryFeeAmount
           const profit = amountAfterEntryFee * (Number.parseFloat(simulationData.profitRate) / 100)
@@ -91,26 +106,29 @@ export default function MonthlyCalculationsPage() {
         monthTotalDepositRates += depositRateAmount
       }
       
-      const monthlyGrowth = ((currentValue - monthInitialValue) / monthInitialValue) * 100
-      const averageDailyProfit = monthDaysCount > 0 ? (monthTotalProfit - monthTotalEntryFees - monthTotalExitFees - monthTotalDailyRates) / monthDaysCount : 0
-      
-      calculations.push({
-        monthNumber: month,
-        monthName: monthNames[date.getMonth()],
-        year: date.getFullYear(),
-        daysCount: monthDaysCount,
-        operationsCount: monthDaysCount * operationsPerDay,
-        initialValue: monthInitialValue,
-        totalEntryFees: monthTotalEntryFees,
-        totalProfit: monthTotalProfit,
-        totalExitFees: monthTotalExitFees,
-        totalDailyRates: monthTotalDailyRates,
-        totalDepositRates: monthTotalDepositRates,
-        netProfit: monthTotalProfit - monthTotalEntryFees - monthTotalExitFees - monthTotalDailyRates,
-        finalValue: currentValue,
-        monthlyGrowth,
-        averageDailyProfit
-      })
+      // Só adicionar o mês se tiver dias calculados
+      if (monthDaysCount > 0) {
+        const monthlyGrowth = ((currentValue - monthInitialValue) / monthInitialValue) * 100
+        const averageDailyProfit = monthDaysCount > 0 ? (monthTotalProfit - monthTotalEntryFees - monthTotalExitFees - monthTotalDailyRates) / monthDaysCount : 0
+        
+        calculations.push({
+          monthNumber: monthOffset + 1,
+          monthName: currentDate.toLocaleString('pt-BR', { month: 'long' }),
+          year: currentDate.getFullYear(),
+          daysCount: monthDaysCount,
+          operationsCount: monthOperationsCount,
+          initialValue: monthInitialValue,
+          finalValue: currentValue,
+          totalEntryFees: monthTotalEntryFees,
+          totalProfit: monthTotalProfit,
+          totalExitFees: monthTotalExitFees,
+          totalDailyRates: monthTotalDailyRates,
+          totalDepositRates: monthTotalDepositRates,
+          netProfit: monthTotalProfit - monthTotalEntryFees - monthTotalExitFees - monthTotalDailyRates,
+          monthlyGrowth,
+          averageDailyProfit
+        })
+      }
     }
     
     setMonthlyCalculations(calculations)

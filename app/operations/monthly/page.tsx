@@ -38,29 +38,39 @@ export default function MonthlySummaryPage() {
     let currentValue = Number.parseFloat(simulationData.initialInvestment)
     const totalMonths = Number.parseInt(simulationData.projectionPeriod)
     
-    const monthNames = [
-      'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-      'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-    ]
+    // Criar data inicial
+    const startDate = new Date(
+      Number.parseInt(simulationData.startYear),
+      Number.parseInt(simulationData.startMonth) - 1,
+      Number.parseInt(simulationData.startDay)
+    )
     
-    for (let month = 1; month <= totalMonths; month++) {
-      const date = new Date(Number.parseInt(simulationData.startYear), Number.parseInt(simulationData.startMonth) - 1 + month, Number.parseInt(simulationData.startDay))
+    // Ajustar para começar do mês inicial
+    for (let monthOffset = 0; monthOffset <= totalMonths; monthOffset++) {
+      const currentDate = new Date(startDate)
+      currentDate.setMonth(startDate.getMonth() + monthOffset)
       
-      const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
+      const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate()
       const operationsPerDay = Number.parseInt(simulationData.operationsPerDay)
       
       const monthInitialValue = currentValue
       let monthTotalProfit = 0
       let monthTotalFees = 0
       let monthDaysCount = 0
-      let bestDayProfit = 0
+      let bestDayProfit = -Infinity
       let worstDayProfit = Infinity
       let bestDay = ''
       let worstDay = ''
       
-      for (let day = 1; day <= daysInMonth; day++) {
-        const currentDate = new Date(date.getFullYear(), date.getMonth(), day)
-        const isWeekend = currentDate.getDay() === 0 || currentDate.getDay() === 6
+      // Determinar o dia inicial para este mês
+      let startDay = 1
+      if (monthOffset === 0) {  // Se for o primeiro mês
+        startDay = Number.parseInt(simulationData.startDay)  // Começar no dia selecionado
+      }
+      
+      for (let day = startDay; day <= daysInMonth; day++) {
+        const dayDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
+        const isWeekend = dayDate.getDay() === 0 || dayDate.getDay() === 6
         
         if (isWeekend && !simulationData.includeWeekends) continue
         
@@ -94,34 +104,37 @@ export default function MonthlySummaryPage() {
         const netDayProfit = dayProfit - dayFees
         if (netDayProfit > bestDayProfit) {
           bestDayProfit = netDayProfit
-          bestDay = `${day.toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}`
+          bestDay = `${day.toString().padStart(2, '0')}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}`
         }
         if (netDayProfit < worstDayProfit) {
           worstDayProfit = netDayProfit
-          worstDay = `${day.toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}`
+          worstDay = `${day.toString().padStart(2, '0')}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}`
         }
       }
       
-      const netProfit = monthTotalProfit - monthTotalFees
-      const profitPercentage = ((currentValue - monthInitialValue) / monthInitialValue) * 100
-      const averageDailyProfit = monthDaysCount > 0 ? netProfit / monthDaysCount : 0
-      
-      summaries.push({
-        monthNumber: month,
-        monthName: monthNames[date.getMonth()],
-        year: date.getFullYear(),
-        totalOperations: monthDaysCount * operationsPerDay,
-        totalDays: monthDaysCount,
-        initialValue: monthInitialValue,
-        finalValue: currentValue,
-        totalProfit: monthTotalProfit,
-        totalFees: monthTotalFees,
-        netProfit,
-        profitPercentage,
-        averageDailyProfit,
-        bestDay,
-        worstDay
-      })
+      // Só adicionar o mês se tiver dias calculados
+      if (monthDaysCount > 0) {
+        const netProfit = monthTotalProfit - monthTotalFees
+        const profitPercentage = ((currentValue - monthInitialValue) / monthInitialValue) * 100
+        const averageDailyProfit = netProfit / monthDaysCount
+        
+        summaries.push({
+          monthNumber: monthOffset + 1, // Assign a unique number for each month
+          monthName: currentDate.toLocaleString('pt-BR', { month: 'long' }),
+          year: currentDate.getFullYear(),
+          totalOperations: monthDaysCount * operationsPerDay,
+          totalDays: monthDaysCount,
+          initialValue: monthInitialValue,
+          finalValue: currentValue,
+          totalProfit: monthTotalProfit,
+          totalFees: monthTotalFees,
+          netProfit: netProfit,
+          profitPercentage: profitPercentage,
+          averageDailyProfit: averageDailyProfit,
+          bestDay: bestDay,
+          worstDay: worstDay
+        })
+      }
     }
     
     setMonthlySummaries(summaries)

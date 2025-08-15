@@ -32,16 +32,29 @@ export default function OperationsPage() {
     let currentValue = Number.parseFloat(simulationData.initialInvestment)
     const totalMonths = Number.parseInt(simulationData.projectionPeriod)
     
-    for (let month = 1; month <= totalMonths; month++) {
-      const date = new Date(Number.parseInt(simulationData.startYear), Number.parseInt(simulationData.startMonth) - 1 + month, Number.parseInt(simulationData.startDay))
+    // Criar data inicial
+    const startDate = new Date(
+      Number.parseInt(simulationData.startYear),
+      Number.parseInt(simulationData.startMonth) - 1,
+      Number.parseInt(simulationData.startDay)
+    )
+    
+    for (let monthOffset = 0; monthOffset < totalMonths; monthOffset++) {
+      const currentDate = new Date(startDate)
+      currentDate.setMonth(startDate.getMonth() + monthOffset)
       
-      // Calcular operações do mês
-      const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
+      const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate()
       const operationsPerDay = Number.parseInt(simulationData.operationsPerDay)
       
-      for (let day = 1; day <= daysInMonth; day++) {
-        const isWeekend = new Date(date.getFullYear(), date.getMonth(), day).getDay() === 0 || 
-                         new Date(date.getFullYear(), date.getMonth(), day).getDay() === 6
+      // Determinar o dia inicial para este mês
+      let startDay = 1
+      if (monthOffset === 0) {  // Se for o primeiro mês
+        startDay = Number.parseInt(simulationData.startDay)  // Começar no dia selecionado
+      }
+      
+      for (let day = startDay; day <= daysInMonth; day++) {
+        const dayDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
+        const isWeekend = dayDate.getDay() === 0 || dayDate.getDay() === 6
         
         if (isWeekend && !simulationData.includeWeekends) continue
         
@@ -54,8 +67,8 @@ export default function OperationsPage() {
           const finalValue = amountAfterProfit - exitFeeAmount
           
           ops.push({
-            id: `M${month}D${day}O${op}`,
-            date: `${day.toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`,
+            id: `M${day}D${op}`,
+            date: `${day.toString().padStart(2, '0')}/${(dayDate.getMonth() + 1).toString().padStart(2, '0')} 00:00`,
             initialValue: currentValue,
             entryFee: entryFeeAmount,
             profit: profit,
