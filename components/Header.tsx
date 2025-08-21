@@ -1,24 +1,31 @@
 "use client"
 
-import Link from 'next/link'
-import { useState } from 'react'
-import { ChevronDown, Gift, User, Menu } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import Link from "next/link"
+import { useState } from "react"
+import { usePathname } from "next/navigation"
+import { ChevronDown, Gift, User, Menu } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 
 export default function Header() {
-  const [activeLink, setActiveLink] = useState('My account')
+  const [activeLink, setActiveLink] = useState("My account")
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const pathname = usePathname()
+
+  // Não renderizar o header se estiver no ambiente admin
+  if (pathname?.startsWith("/admin")) {
+    return null
+  }
 
   const navigationItems = [
-    { name: 'My account', href: '/overview' },
-    { name: 'Índices', href: '/indices' },
-    { name: 'SMLKCARD', href: '/card', badge: 'new' },
-    { name: 'Reports', href: '/reports' },
-    { name: 'Simulação', href: '/simulate' },
-    { name: 'Operações', href: '/operations' },
-    { name: 'Deposits and withdrawals', href: '/deposits', hasDropdown: true },
-    { name: 'More products', href: '/more', hasDropdown: true },
+    { name: "My account", href: "/overview" },
+    { name: "Índices", href: "/indices" },
+    { name: "SMLKCARD", href: "/card", badge: "new" },
+    { name: "Reports", href: "/reports" },
+    { name: "Simulação", href: "/simulate" },
+    { name: "Operações", href: "/operations" },
+    { name: "Deposits and withdrawals", href: "/deposits", hasDropdown: true },
+    { name: "More products", href: "/more", hasDropdown: true },
   ]
 
   return (
@@ -33,81 +40,79 @@ export default function Header() {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex space-x-8">
             {navigationItems.map((item) => (
               <div key={item.name} className="relative">
                 <Link
                   href={item.href}
-                  className={`picnic-nav-link ${
-                    activeLink === item.name
-                      ? 'picnic-nav-link-active'
-                      : 'picnic-nav-link-inactive'
-                  }`}
                   onClick={() => setActiveLink(item.name)}
+                  className={`flex items-center text-sm font-medium transition-colors ${
+                    activeLink === item.name
+                      ? "text-blue-600"
+                      : "text-gray-700 hover:text-blue-600"
+                  }`}
                 >
-                  <span>{item.name}</span>
+                  {item.name}
                   {item.badge && (
-                    <Badge variant="secondary" className="ml-1 bg-green-100 text-green-700 text-xs px-1.5 py-0.5">
+                    <Badge variant="secondary" className="ml-2">
                       {item.badge}
                     </Badge>
                   )}
-                  {item.hasDropdown && <ChevronDown className="h-4 w-4 ml-1" />}
+                  {item.hasDropdown && (
+                    <ChevronDown size={16} className="ml-1" />
+                  )}
                 </Link>
               </div>
             ))}
           </nav>
 
-          {/* Right side buttons */}
+          {/* User Menu */}
           <div className="flex items-center space-x-4">
-            <Button className="bg-black text-white hover:bg-gray-800 px-4 py-2 rounded-lg flex items-center space-x-2">
-              <Gift className="h-4 w-4" />
-              <span className="text-sm font-medium">Earn US$ 10</span>
+            <div className="flex items-center space-x-2">
+              <User size={20} className="text-gray-700" />
+              <span className="text-sm font-medium text-gray-700">User</span>
+            </div>
+            <Button variant="outline" size="sm">
+              <Gift size={16} className="mr-2" />
+              Rewards
             </Button>
-            
-            <Button variant="ghost" className="p-2 rounded-full">
-              <User className="h-6 w-6 picnic-text" />
-            </Button>
+          </div>
 
-            {/* Mobile menu button */}
-            <Button
-              variant="ghost"
-              className="md:hidden p-2 rounded-lg"
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 text-gray-700 hover:text-blue-600"
             >
-              <Menu className="h-6 w-6 picnic-text" />
-            </Button>
+              <Menu size={24} />
+            </button>
           </div>
         </div>
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-100 bg-white">
+          <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navigationItems.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`block px-3 py-2 rounded-md text-base font-medium ${
-                    activeLink === item.name
-                      ? 'picnic-green bg-green-50'
-                      : 'picnic-text hover:text-green-600 hover:bg-gray-50'
-                  }`}
                   onClick={() => {
                     setActiveLink(item.name)
                     setMobileMenuOpen(false)
                   }}
+                  className={`block px-3 py-2 rounded-md text-base font-medium ${
+                    activeLink === item.name
+                      ? "text-blue-600 bg-blue-50"
+                      : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                  }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <span>{item.name}</span>
-                    <div className="flex items-center space-x-2">
-                      {item.badge && (
-                        <Badge variant="secondary" className="bg-green-100 text-green-700 text-xs px-1.5 py-0.5">
-                          {item.badge}
-                        </Badge>
-                      )}
-                      {item.hasDropdown && <ChevronDown className="h-4 w-4" />}
-                    </div>
-                  </div>
+                  {item.name}
+                  {item.badge && (
+                    <Badge variant="secondary" className="ml-2">
+                      {item.badge}
+                    </Badge>
+                  )}
                 </Link>
               ))}
             </div>
@@ -116,4 +121,4 @@ export default function Header() {
       </div>
     </header>
   )
-} 
+}
