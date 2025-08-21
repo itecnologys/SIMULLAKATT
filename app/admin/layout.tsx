@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useState, Suspense } from "react"
 import { ChevronDown, User, Menu, X } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
@@ -42,7 +42,7 @@ export default function AdminLayout({
                   ADMINISTRATION
                 </h1>
               </div>
-              <span className="ml-4 px-3 py-1 bg-blue-600 text-white text-xs font-semibold rounded-full">v2.013</span>
+              <span className="ml-4 px-3 py-1 bg-blue-600 text-white text-xs font-semibold rounded-full">v2.015</span>
             </div>
             <div className="flex items-center space-x-4">
               <a href="/" className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
@@ -115,7 +115,13 @@ export default function AdminLayout({
 
         {/* Main Content */}
         <div className="flex-1">
-          {children}
+          <Suspense fallback={
+            <div className="flex items-center justify-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+          }>
+            {children}
+          </Suspense>
         </div>
       </div>
     </div>

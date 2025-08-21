@@ -1,34 +1,26 @@
-import type { Metadata } from 'next'
-import { GeistSans } from 'geist/font/sans'
-import { GeistMono } from 'geist/font/mono'
-import './globals.css'
-import "@/styles/globals.css"
-import "@/styles/yahoo-finance.css"
+import type { Metadata } from "next"
 import { Inter } from "next/font/google"
-import { cn } from "@/lib/utils"
-import Header from '@/components/Header'
-import { SimulationProvider } from '@/contexts/SimulationContext'
+import "./globals.css"
+import PreloadLinks from "@/components/PreloadLinks"
+
+const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: 'SIMULAK - Simulação Financeira Avançada',
-  description: 'Plataforma avançada de simulação financeira com análise de mercado e projeções de investimento',
-  generator: 'SIMULAK v2.0',
+  title: "SIMULAK - Simulação Financeira Avançada",
+  description: "Plataforma avançada de simulação financeira com análise de mercado e projeções de investimento",
+  generator: "SIMULAK v2.0",
 }
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
-    <html lang="pt-BR" className={`${GeistSans.variable} ${GeistMono.variable}`}>
-      <body suppressHydrationWarning={true} className={`${GeistSans.className} bg-white`}>
-        <SimulationProvider>
-          <Header />
-          <main className="pt-16">
-            {children}
-          </main>
-        </SimulationProvider>
+    <html lang="pt-BR">
+      <body className={inter.className}>
+        <PreloadLinks />
+        {children}
       </body>
     </html>
   )

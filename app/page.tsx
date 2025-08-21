@@ -1,208 +1,92 @@
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import MarketTickerBloomberg from '@/components/MarketTickerBloomberg';
-import CryptoMarketTicker from '@/components/CryptoMarketTicker';
-import Link from 'next/link';
+"use client"
 
-export default function HomePage() {
-  return (
-    <div className='min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100'>
-      {/* Market Tickers */}
-      <MarketTickerBloomberg />
-      <CryptoMarketTicker />
-      
-      {/* Hero Section */}
-      <div className='relative py-20 bg-gradient-to-r from-blue-600 via-indigo-700 to-purple-800 overflow-hidden'>
-        <div className='relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='text-center'>
-            <Badge variant='secondary' className='mb-6 bg-white/20 text-white border-white/30 px-4 py-2'>
-              Advanced AI Forecasting Engine v2.004
-            </Badge>
-            
-            <h1 className='text-6xl font-bold text-white sm:text-7xl md:text-8xl mb-6 tracking-tight'>
-              SIMULAK
-            </h1>
-            
-            <p className='text-xl text-blue-100 mb-8 max-w-3xl mx-auto leading-relaxed'>
-              The world's most advanced financial forecasting platform powered by historical data analysis and artificial intelligence
-            </p>
-            
-            <div className='flex flex-col sm:flex-row gap-6 justify-center items-center'>
-              <Link href='/simulate'>
-                <Button className='bg-white text-blue-600 hover:bg-blue-50 px-10 py-5 text-lg font-semibold rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105'>
-                  Start Your First Simulation
-                </Button>
-              </Link>
-              <Link href='/dashboard'>
-                <Button variant='outline' className='border-white/30 text-white hover:bg-white/10 px-10 py-5 text-lg font-semibold rounded-2xl backdrop-blur-sm transition-all duration-300'>
-                  Explore Dashboard
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
+import { Suspense, lazy } from "react"
+import Header from "@/components/Header"
+
+// Lazy loading dos componentes pesados
+const MarketTickerBloomberg = lazy(() => import("@/components/MarketTickerBloomberg"))
+const CryptoMarketTicker = lazy(() => import("@/components/CryptoMarketTicker"))
+
+// Fallback otimizado
+const TickerFallback = () => (
+  <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+    <div className="animate-pulse">
+      <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
+      <div className="space-y-3">
+        <div className="h-3 bg-gray-200 rounded"></div>
+        <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+        <div className="h-3 bg-gray-200 rounded w-4/6"></div>
       </div>
-
-      {/* Features Section */}
-      <div className='py-24 bg-white'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='text-center mb-20'>
-            <h2 className='text-5xl font-bold text-gray-900 mb-6'>
-              Why Choose SIMULAK for Your Trading Success?
-            </h2>
-            <p className='text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed'>
-              Experience the next generation of financial simulation with our comprehensive suite of tools designed to transform how you analyze markets, test strategies, and make investment decisions.
-            </p>
-          </div>
-
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10'>
-            <Card className='group hover:shadow-2xl transition-all duration-500 border-0 shadow-xl bg-gradient-to-br from-blue-50 to-indigo-50 hover:scale-105'>
-              <CardHeader className='pb-6'>
-                <CardTitle className='text-2xl text-gray-900 mb-3'>Historical Data Engine</CardTitle>
-                <CardDescription className='text-gray-600 text-base leading-relaxed'>
-                  Access real-time and historical data from 100+ global markets with millisecond precision.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className='space-y-3 text-sm text-gray-600'>
-                  <li>Real-time data feeds from major exchanges</li>
-                  <li>Advanced pattern recognition algorithms</li>
-                  <li>Multi-timeframe analysis (1m to monthly)</li>
-                  <li>Custom data filtering and export</li>
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card className='group hover:shadow-2xl transition-all duration-500 border-0 shadow-xl bg-gradient-to-br from-green-50 to-emerald-50 hover:scale-105'>
-              <CardHeader className='pb-6'>
-                <CardTitle className='text-2xl text-gray-900 mb-3'>Advanced Predictive Analytics</CardTitle>
-                <CardDescription className='text-gray-600 text-base leading-relaxed'>
-                  Our AI-powered forecasting models utilize deep learning to predict market movements with industry-leading accuracy.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className='space-y-3 text-sm text-gray-600'>
-                  <li>Machine learning algorithms (LSTM, GRU, Transformer)</li>
-                  <li>Risk assessment and portfolio optimization</li>
-                  <li>Confidence scoring and probability analysis</li>
-                  <li>Sentiment analysis integration</li>
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card className='group hover:shadow-2xl transition-all duration-500 border-0 shadow-xl bg-gradient-to-br from-purple-50 to-pink-50 hover:scale-105'>
-              <CardHeader className='pb-6'>
-                <CardTitle className='text-2xl text-gray-900 mb-3'>Professional Strategy Simulation</CardTitle>
-                <CardDescription className='text-gray-600 text-base leading-relaxed'>
-                  Test your trading strategies against historical data with our comprehensive backtesting engine.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className='space-y-3 text-sm text-gray-600'>
-                  <li>Advanced backtesting with slippage simulation</li>
-                  <li>Performance metrics and risk analysis</li>
-                  <li>Strategy optimization and parameter tuning</li>
-                  <li>Walk-forward analysis and out-of-sample testing</li>
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
-
-      {/* Getting Started Section */}
-      <div className='py-24 bg-gradient-to-br from-gray-50 to-blue-50'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='text-center mb-16'>
-            <h2 className='text-4xl font-bold text-gray-900 mb-6'>
-              Start Your Forecasting Journey in 3 Simple Steps
-            </h2>
-            <p className='text-xl text-gray-600 max-w-3xl mx-auto'>
-              Learn how to leverage historical data for smarter trading decisions with our comprehensive platform
-            </p>
-          </div>
-
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
-            <div className='text-center'>
-              <div className='w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6'>
-                <span className='text-3xl font-bold text-blue-600'>1</span>
-              </div>
-              <h3 className='text-2xl font-semibold text-gray-900 mb-4'>Connect Your Data Sources</h3>
-              <p className='text-gray-600 mb-6 leading-relaxed'>
-                Import historical data from your preferred sources or use our comprehensive market data feeds.
-              </p>
-            </div>
-
-            <div className='text-center'>
-              <div className='w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6'>
-                <span className='text-3xl font-bold text-green-600'>2</span>
-              </div>
-              <h3 className='text-2xl font-semibold text-gray-900 mb-4'>Configure Your Analysis</h3>
-              <p className='text-gray-600 mb-6 leading-relaxed'>
-                Set up your forecasting parameters, choose your preferred algorithms, and define your risk management rules.
-              </p>
-            </div>
-
-            <div className='text-center'>
-              <div className='w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6'>
-                <span className='text-3xl font-bold text-purple-600'>3</span>
-              </div>
-              <h3 className='text-2xl font-semibold text-gray-900 mb-4'>Generate & Monitor Forecasts</h3>
-              <p className='text-gray-600 mb-6 leading-relaxed'>
-                Run your simulations and receive detailed forecasts with confidence scores.
-              </p>
-            </div>
-          </div>
-
-          <div className='text-center mt-12'>
-            <Link href='/simulate'>
-              <Button className='bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 text-lg font-semibold rounded-2xl shadow-xl'>
-                Start Your First Forecast
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* CTA Section */}
-      <div className='py-24 bg-gradient-to-r from-blue-600 to-indigo-700'>
-        <div className='max-w-5xl mx-auto text-center px-4 sm:px-6 lg:px-8'>
-          <h2 className='text-5xl font-bold text-white mb-6'>
-            Ready to Transform Your Trading Strategy?
-          </h2>
-          <p className='text-xl text-blue-100 mb-8 max-w-3xl mx-auto leading-relaxed'>
-            Join thousands of successful traders who are already using SIMULAK to make smarter, data-driven decisions.
-          </p>
-          
-          <div className='flex flex-col sm:flex-row gap-6 justify-center mb-8'>
-            <Link href='/simulate'>
-              <Button className='bg-white text-blue-600 hover:bg-blue-50 px-12 py-5 text-xl font-semibold rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-300'>
-                Start Free Trial
-              </Button>
-            </Link>
-            <Link href='/demo'>
-              <Button variant='outline' className='border-white/30 text-white hover:bg-white/10 px-12 py-5 text-xl font-semibold rounded-2xl backdrop-blur-sm transition-all duration-300'>
-                Watch Live Demo
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <footer className='bg-gray-900 text-white'>
-        <div className='max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8'>
-          <div className='text-center'>
-            <h3 className='text-3xl font-bold mb-6'>SIMULAK</h3>
-            <p className='text-gray-400 mb-6 leading-relaxed text-lg'>
-              The next generation of financial forecasting powered by artificial intelligence and comprehensive historical data analysis.
-            </p>
-            <p className='text-lg'>&copy; 2024 SIMULAK. All rights reserved. | Advanced AI Forecasting Engine v2.004</p>
-          </div>
-        </div>
-      </footer>
     </div>
-  );
+  </div>
+)
+
+export default function Home() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+      <Header />
+      
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Hero Section */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            SIMULAK - Simulação Financeira Avançada
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Plataforma avançada de simulação financeira com análise de mercado e projeções de investimento
+          </p>
+        </div>
+
+        {/* Market Data Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+          {/* Traditional Market Ticker */}
+          <div className="bg-white rounded-lg shadow-sm">
+            <div className="p-6">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Mercado Tradicional</h2>
+              <Suspense fallback={<TickerFallback />}>
+                <MarketTickerBloomberg />
+              </Suspense>
+            </div>
+          </div>
+
+          {/* Crypto Market Ticker */}
+          <div className="bg-white rounded-lg shadow-sm">
+            <div className="p-6">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Criptomoedas</h2>
+              <Suspense fallback={<TickerFallback />}>
+                <CryptoMarketTicker />
+              </Suspense>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <a href="/indices" className="bg-white rounded-lg shadow-sm p-6 hover:shadow-lg transition-all duration-300">
+            <div className="text-center">
+              <div className="text-4xl mb-4">📊</div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Índices</h3>
+              <p className="text-gray-600">Visualize índices de diversos mercados financeiros</p>
+            </div>
+          </a>
+
+          <a href="/card" className="bg-white rounded-lg shadow-sm p-6 hover:shadow-lg transition-all duration-300">
+            <div className="text-center">
+              <div className="text-4xl mb-4">💳</div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">SMLKCARD</h3>
+              <p className="text-gray-600">Gerencie seus cartões e transações</p>
+            </div>
+          </a>
+
+          <a href="/admin" className="bg-white rounded-lg shadow-sm p-6 hover:shadow-lg transition-all duration-300">
+            <div className="text-center">
+              <div className="text-4xl mb-4">⚙️</div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Administração</h3>
+              <p className="text-gray-600">Painel administrativo e configurações</p>
+            </div>
+          </a>
+        </div>
+      </main>
+    </div>
+  )
 }
