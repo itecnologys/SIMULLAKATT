@@ -1,0 +1,354 @@
+"use client";
+
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { 
+  TrendingUp, 
+  TrendingDown, 
+  BarChart3, 
+  Activity, 
+  Target, 
+  Calendar,
+  DollarSign,
+  Percent,
+  ArrowUpRight,
+  ArrowDownRight,
+  Minus
+} from 'lucide-react';
+
+type MarketData = {
+  symbol: string;
+  name: string;
+  price: number;
+  change: number;
+  changePercent: number;
+  category: string;
+};
+
+type HistoricalAnalysis = {
+  symbol: string;
+  currentPrice: number;
+  priceChange: number;
+  priceChangePercent: number;
+  volume: number;
+  marketCap?: number;
+  // Análise histórica
+  historicalHigh: number;
+  historicalLow: number;
+  yearHigh: number;
+  yearLow: number;
+  avgVolume: number;
+  volatility: number;
+  // Métricas de performance
+  performance1D: number;
+  performance1W: number;
+  performance1M: number;
+  performance3M: number;
+  performance6M: number;
+  performance1Y: number;
+  // Análise técnica
+  rsi: number;
+  macd: string;
+  support: number;
+  resistance: number;
+  trend: 'bullish' | 'bearish' | 'neutral';
+  // Dados históricos simulados
+  priceHistory: Array<{
+    date: string;
+    price: number;
+    volume: number;
+  }>;
+};
+
+const IndexBIAnalysis: React.FC<{ data: MarketData }> = ({ data }) => {
+  const [analysis, setAnalysis] = useState<HistoricalAnalysis | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simular carregamento de dados históricos
+    const generateAnalysis = () => {
+      const basePrice = data.price;
+      const change = data.change;
+      
+      // Gerar dados históricos simulados
+      const priceHistory = [];
+      const now = new Date();
+      for (let i = 30; i >= 0; i--) {
+        const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+        const randomVariation = (Math.random() - 0.5) * 0.02; // ±1% variação
+        const historicalPrice = basePrice * (1 + randomVariation);
+        priceHistory.push({
+          date: date.toISOString().split('T')[0],
+          price: historicalPrice,
+          volume: Math.floor(Math.random() * 1000000) + 500000
+        });
+      }
+
+      const historicalHigh = Math.max(...priceHistory.map(p => p.price));
+      const historicalLow = Math.min(...priceHistory.map(p => p.price));
+      const avgVolume = priceHistory.reduce((sum, p) => sum + p.volume, 0) / priceHistory.length;
+      
+      // Calcular volatilidade (desvio padrão dos retornos)
+      const returns = priceHistory.slice(1).map((p, i) => 
+        (p.price - priceHistory[i].price) / priceHistory[i].price
+      );
+      const avgReturn = returns.reduce((sum, r) => sum + r, 0) / returns.length;
+      const volatility = Math.sqrt(
+        returns.reduce((sum, r) => sum + Math.pow(r - avgReturn, 2), 0) / returns.length
+      ) * 100;
+
+      // Determinar tendência
+      const recentPrices = priceHistory.slice(-7);
+      const trend = recentPrices[recentPrices.length - 1].price > recentPrices[0].price ? 'bullish' : 
+                   recentPrices[recentPrices.length - 1].price < recentPrices[0].price ? 'bearish' : 'neutral';
+
+      const analysisData: HistoricalAnalysis = {
+        symbol: data.symbol,
+        currentPrice: basePrice,
+        priceChange: change,
+        priceChangePercent: data.changePercent,
+        volume: Math.floor(Math.random() * 5000000) + 1000000,
+        marketCap: data.category === 'Crypto' ? Math.floor(Math.random() * 100000000000) + 1000000000 : undefined,
+        historicalHigh,
+        historicalLow,
+        yearHigh: historicalHigh * 1.1,
+        yearLow: historicalLow * 0.9,
+        avgVolume,
+        volatility,
+        performance1D: data.changePercent,
+        performance1W: (Math.random() - 0.5) * 10,
+        performance1M: (Math.random() - 0.5) * 20,
+        performance3M: (Math.random() - 0.5) * 30,
+        performance6M: (Math.random() - 0.5) * 40,
+        performance1Y: (Math.random() - 0.5) * 60,
+        rsi: Math.floor(Math.random() * 40) + 30, // 30-70
+        macd: Math.random() > 0.5 ? 'Bullish' : 'Bearish',
+        support: historicalLow * 0.98,
+        resistance: historicalHigh * 1.02,
+        trend,
+        priceHistory
+      };
+
+      setAnalysis(analysisData);
+      setIsLoading(false);
+    };
+
+    const timer = setTimeout(generateAnalysis, 500);
+    return () => clearTimeout(timer);
+  }, [data]);
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="h-24 bg-gray-200 rounded"></div>
+            <div className="h-24 bg-gray-200 rounded"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!analysis) return null;
+
+  const getTrendColor = (trend: string) => {
+    switch (trend) {
+      case 'bullish': return 'text-green-600 bg-green-50';
+      case 'bearish': return 'text-red-600 bg-red-50';
+      default: return 'text-gray-600 bg-gray-50';
+    }
+  };
+
+  const getTrendIcon = (trend: string) => {
+    switch (trend) {
+      case 'bullish': return <TrendingUp className="h-4 w-4" />;
+      case 'bearish': return <TrendingDown className="h-4 w-4" />;
+      default: return <Minus className="h-4 w-4" />;
+    }
+  };
+
+  const getPerformanceColor = (value: number) => {
+    return value >= 0 ? 'text-green-600' : 'text-red-600';
+  };
+
+  const getPerformanceIcon = (value: number) => {
+    return value >= 0 ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />;
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header com informações principais */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">{analysis.symbol}</h2>
+          <p className="text-gray-600">{data.name}</p>
+        </div>
+        <div className="text-right">
+          <div className="text-3xl font-bold text-gray-900">
+            ${analysis.currentPrice.toFixed(2)}
+          </div>
+          <div className={`text-lg font-medium ${analysis.priceChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            {analysis.priceChange >= 0 ? '+' : ''}{analysis.priceChange.toFixed(2)} ({analysis.priceChangePercent.toFixed(2)}%)
+          </div>
+        </div>
+      </div>
+
+      {/* Indicadores de tendência */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <Activity className="h-4 w-4" />
+              Tendência
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${getTrendColor(analysis.trend)}`}>
+              {getTrendIcon(analysis.trend)}
+              {analysis.trend === 'bullish' ? 'Alta' : analysis.trend === 'bearish' ? 'Baixa' : 'Lateral'}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              Volatilidade
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{analysis.volatility.toFixed(1)}%</div>
+            <div className="text-sm text-gray-600">Anual</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <Target className="h-4 w-4" />
+              RSI
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{analysis.rsi}</div>
+            <div className="text-sm text-gray-600">
+              {analysis.rsi > 70 ? 'Sobrecomprado' : analysis.rsi < 30 ? 'Sobrevendido' : 'Neutro'}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Performance histórica */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5" />
+            Performance Histórica
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {[
+              { label: '1D', value: analysis.performance1D },
+              { label: '1S', value: analysis.performance1W },
+              { label: '1M', value: analysis.performance1M },
+              { label: '3M', value: analysis.performance3M },
+              { label: '6M', value: analysis.performance6M },
+              { label: '1A', value: analysis.performance1Y }
+            ].map((item) => (
+              <div key={item.label} className="text-center">
+                <div className="text-sm text-gray-600">{item.label}</div>
+                <div className={`text-lg font-bold flex items-center justify-center gap-1 ${getPerformanceColor(item.value)}`}>
+                  {getPerformanceIcon(item.value)}
+                  {item.value >= 0 ? '+' : ''}{item.value.toFixed(1)}%
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Níveis de suporte e resistência */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm font-medium">Níveis Técnicos</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600">Resistência</span>
+              <span className="font-medium text-red-600">${analysis.resistance.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600">Suporte</span>
+              <span className="font-medium text-green-600">${analysis.support.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600">Máximo 52s</span>
+              <span className="font-medium">${analysis.yearHigh.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600">Mínimo 52s</span>
+              <span className="font-medium">${analysis.yearLow.toFixed(2)}</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm font-medium">Volume e Liquidez</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600">Volume Atual</span>
+              <span className="font-medium">{analysis.volume.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600">Volume Médio</span>
+              <span className="font-medium">{Math.floor(analysis.avgVolume).toLocaleString()}</span>
+            </div>
+            {analysis.marketCap && (
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-600">Market Cap</span>
+                <span className="font-medium">${(analysis.marketCap / 1000000000).toFixed(2)}B</span>
+              </div>
+            )}
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600">MACD</span>
+              <span className={`font-medium ${analysis.macd === 'Bullish' ? 'text-green-600' : 'text-red-600'}`}>
+                {analysis.macd}
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Histórico de preços (últimos 7 dias) */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm font-medium">Histórico de Preços (7 dias)</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            {analysis.priceHistory.slice(-7).map((day, index) => (
+              <div key={index} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0">
+                <span className="text-sm text-gray-600">{day.date}</span>
+                <div className="flex items-center gap-4">
+                  <span className="font-medium">${day.price.toFixed(2)}</span>
+                  <span className="text-sm text-gray-500">Vol: {day.volume.toLocaleString()}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default IndexBIAnalysis;

@@ -161,3 +161,88 @@
     @apply text-gray-700 hover:text-green-600;
   }
 }
+
+/* Animações para os tickers de mercado */
+@keyframes scroll-left {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes scroll-right {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-scroll-left {
+  animation: scroll-left 30s linear infinite;
+}
+
+.animate-scroll-right {
+  animation: scroll-right 30s linear infinite;
+}
+
+/* Pausar animação no hover */
+.animate-scroll-left:hover,
+.animate-scroll-right:hover {
+  animation-play-state: paused;
+}
+
+/* Animações infinitas para os tickers de mercado - SEM ESPAÇOS VAZIOS */
+@keyframes scroll-left-infinite {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-33.333%);
+  }
+}
+
+@keyframes scroll-right-infinite {
+  0% {
+    transform: translateX(-33.333%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+.animate-scroll-left {
+  animation: scroll-left-infinite 45s linear infinite;
+  /* Garantir que o conteúdo seja largo o suficiente */
+  width: 300%;
+  display: flex;
+}
+
+.animate-scroll-right {
+  animation: scroll-right-infinite 45s linear infinite;
+  /* Garantir que o conteúdo seja largo o suficiente */
+  width: 300%;
+  display: flex;
+}
+
+/* Container para garantir overflow hidden */
+.ticker-container {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+/* Pausar animação no hover */
+.animate-scroll-left:hover,
+.animate-scroll-right:hover {
+  animation-play-state: paused;
+}
+
+/* Garantir que não haja quebras de linha */
+.ticker-item {
+  flex-shrink: 0;
+  white-space: nowrap;
+}

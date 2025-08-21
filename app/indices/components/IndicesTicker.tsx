@@ -1,70 +1,62 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
-type MarketData = {
+type IndicesData = {
   symbol: string;
   name: string;
   price: number;
   change: number;
   changePercent: number;
   volume: number;
-  category: string;
   lastUpdate: string;
 };
 
-const MarketTickerBloomberg: React.FC = () => {
-  const [data, setData] = useState<MarketData[]>([]);
+const IndicesTicker: React.FC = () => {
+  const [data, setData] = useState<IndicesData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
 
-    // Função para buscar dados via API REST (apenas dados tradicionais, sem crypto)
-    const fetchMarketData = async () => {
+    const fetchIndicesData = async () => {
       try {
-        const response = await fetch("/api/market-data");
+        const response = await fetch("/indices/api");
         if (!response.ok) {
-          throw new Error("Falha ao buscar dados de mercado");
+          throw new Error("Falha ao buscar dados de índices");
         }
+        
         const result = await response.json();
         
         // Verificar se a resposta tem a estrutura esperada
-        const marketData = result.data || result;
+        const indicesData = result.data || result;
         
-        // Garantir que marketData seja um array
-        if (!Array.isArray(marketData)) {
-          console.error("Dados de mercado não são um array:", marketData);
+        // Garantir que indicesData seja um array
+        if (!Array.isArray(indicesData)) {
+          console.error("Dados de índices não são um array:", indicesData);
           throw new Error("Formato de dados inválido");
         }
         
-        // Filtrar apenas dados tradicionais (excluir crypto)
-        const traditionalData = marketData.filter((item: MarketData) => 
-          !item.category?.toLowerCase().includes("crypto") && 
-          !item.category?.toLowerCase().includes("cryptocurrency")
-        );
-        
         if (isMounted) {
-          setData(traditionalData);
+          setData(indicesData);
           setError(null);
           setIsLoading(false);
         }
       } catch (err) {
-        console.error("Erro ao buscar dados de mercado:", err);
+        console.error("Erro ao buscar dados de índices:", err);
         if (isMounted) {
-          setError("Erro ao carregar dados de mercado");
+          setError("Erro ao carregar dados de índices");
           setIsLoading(false);
         }
       }
     };
 
-    // Buscar dados imediatamente
-    fetchMarketData();
+    fetchIndicesData();
 
     // Atualizar dados a cada 30 segundos
     const interval = setInterval(() => {
       if (isMounted) {
-        fetchMarketData();
+        fetchIndicesData();
       }
     }, 30000);
 
@@ -76,10 +68,10 @@ const MarketTickerBloomberg: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 px-4">
+      <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white py-2 px-4">
         <div className="flex items-center justify-center space-x-2">
           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-          <span className="text-sm">Carregando dados tradicionais...</span>
+          <span className="text-sm">Carregando índices...</span>
         </div>
       </div>
     );
@@ -96,13 +88,13 @@ const MarketTickerBloomberg: React.FC = () => {
   }
 
   return (
-    <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 px-4 ticker-container">
+    <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white py-2 px-4 ticker-container">
       <div className="flex items-center space-x-4 animate-scroll-left">
         {/* Primeira repetição */}
         {data.map((item, index) => (
           <div key={`first-${index}`} className="flex items-center space-x-2 whitespace-nowrap ticker-item">
             <span className="font-semibold text-sm">{item.symbol}</span>
-            <span className="text-sm">${item.price.toFixed(2)}</span>
+            <span className="text-sm">{item.price.toLocaleString()}</span>
             <span className={`text-xs ${item.change >= 0 ? "text-green-300" : "text-red-300"}`}>
               {item.change >= 0 ? "+" : ""}{item.change.toFixed(2)} ({item.changePercent.toFixed(2)}%)
             </span>
@@ -112,17 +104,7 @@ const MarketTickerBloomberg: React.FC = () => {
         {data.map((item, index) => (
           <div key={`second-${index}`} className="flex items-center space-x-2 whitespace-nowrap ticker-item">
             <span className="font-semibold text-sm">{item.symbol}</span>
-            <span className="text-sm">${item.price.toFixed(2)}</span>
-            <span className={`text-xs ${item.change >= 0 ? "text-green-300" : "text-red-300"}`}>
-              {item.change >= 0 ? "+" : ""}{item.change.toFixed(2)} ({item.changePercent.toFixed(2)}%)
-            </span>
-          </div>
-        ))}
-        {/* Terceira repetição para garantir que não haja espaços */}
-        {data.map((item, index) => (
-          <div key={`third-${index}`} className="flex items-center space-x-2 whitespace-nowrap ticker-item">
-            <span className="font-semibold text-sm">{item.symbol}</span>
-            <span className="text-sm">${item.price.toFixed(2)}</span>
+            <span className="text-sm">{item.price.toLocaleString()}</span>
             <span className={`text-xs ${item.change >= 0 ? "text-green-300" : "text-red-300"}`}>
               {item.change >= 0 ? "+" : ""}{item.change.toFixed(2)} ({item.changePercent.toFixed(2)}%)
             </span>
@@ -133,4 +115,4 @@ const MarketTickerBloomberg: React.FC = () => {
   );
 };
 
-export default MarketTickerBloomberg;
+export default IndicesTicker;

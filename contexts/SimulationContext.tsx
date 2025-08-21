@@ -61,7 +61,7 @@ export const SimulationProvider: React.FC<SimulationProviderProps> = ({ children
   const [simulationData, setSimulationData] = useState<SimulationData>({
     initialInvestment: "1500",
     operationsPerDay: "4",
-    profitRate: "2.5",
+    profitRate: "0.7",
     dailyRate: "0.3",
     depositRate: "0.2",
     projectionPeriod: "24",
@@ -91,7 +91,7 @@ export const SimulationProvider: React.FC<SimulationProviderProps> = ({ children
         setSimulationData({
           initialInvestment: setup.initialInvestment?.toString() || "1500",
           operationsPerDay: setup.operationsPerDay?.toString() || "4",
-          profitRate: setup.profitRate?.toString() || "2.5",
+          profitRate: setup.profitRate?.toString() || "0.7",
           dailyRate: setup.dailyRate?.toString() || "0.3",
           depositRate: setup.depositRate?.toString() || "0.2",
           projectionPeriod: setup.projectionMonths?.toString() || "24",

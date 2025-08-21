@@ -3,15 +3,15 @@
 import React, { useState, Suspense, useEffect } from 'react';
 import { Sparklines, SparklinesLine, SparklinesSpots } from 'react-sparklines';
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
+import { Loader2, ExternalLink } from 'lucide-react';
 
-// Carregamento dinâmico do componente BI
-const IndexBIAnalysis = dynamic(
-  () => import('./IndexBIAnalysis'),
+// Carregamento dinâmico do TradingViewChart
+const TradingViewChart = dynamic(
+  () => import('./TradingViewChart'),
   { 
     loading: () => (
-      <div className="w-full h-[400px] flex items-center justify-center">
+      <div className="w-full h-[500px] flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
       </div>
     ),
@@ -47,6 +47,34 @@ const generateHistoricalData = (symbol: string, price: number, change: number): 
     data.push(Math.max(0, point)); // Garantir que não seja negativo
   }
   data.push(price);
+  return data;
+};
+
+const generateDetailedHistoricalData = (symbol: string, price: number, change: number) => {
+  const now = new Date();
+  const data = [];
+  const points = 100;
+  const trend = change > 0 ? 1 : -1;
+  let currentPrice = price - change;
+  
+  // Usar o símbolo como seed para garantir consistência
+  const seed = symbol.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  
+  for (let i = 0; i < points; i++) {
+    const time = new Date(now.getTime() - (points - i) * 24 * 60 * 60 * 1000);
+    const pseudoRandom = Math.sin(seed + i * 0.05) * 0.5 + 0.5;
+    const randomVariation = (pseudoRandom - 0.5) * Math.abs(change) * 0.2;
+    const point = currentPrice + (trend * Math.abs(change) * (i / points)) + randomVariation;
+    
+    data.push({
+      time: time.toISOString(),
+      value: Math.max(0, point)
+    });
+  }
+  data.push({
+    time: now.toISOString(),
+    value: price
+  });
   return data;
 };
 
@@ -115,11 +143,43 @@ const QuoteCard: React.FC<{ data: MarketData }> = ({ data }) => {
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogTitle className="sr-only">Análise BI do Indicador</DialogTitle>
+        <DialogTitle className="sr-only">Detalhes do Indicador</DialogTitle>
           <div className="space-y-4">
-            <Suspense fallback={<div className="h-[400px] flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
-              <IndexBIAnalysis data={data} />
-            </Suspense>
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">{data.symbol}</h2>
+                <p className="text-gray-600">{data.name}</p>
+              </div>
+              <div className="text-right">
+                <div className="text-3xl font-bold text-gray-900">
+                  ${data.price.toFixed(2)}
+                </div>
+                <div className={`text-lg font-medium ${data.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {getChangeIcon(data.change)} {data.change >= 0 ? '+' : ''}{data.change.toFixed(2)} ({data.changePercent.toFixed(2)}%)
+                </div>
+              </div>
+            </div>
+            
+            <div className="border-t pt-4">
+              <h3 className="text-lg font-semibold mb-4">Gráfico Detalhado</h3>
+              <Suspense fallback={<div className="h-[400px] flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+                <TradingViewChart 
+                  symbol={data.symbol} 
+                  historicalData={generateDetailedHistoricalData(data.symbol, data.price, data.change)}
+                />
+              </Suspense>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span className="text-gray-600">Volume:</span>
+                <span className="ml-2 font-medium">{data.volume?.toLocaleString() || 'N/A'}</span>
+              </div>
+              <div>
+                <span className="text-gray-600">Categoria:</span>
+                <span className="ml-2 font-medium">{data.category}</span>
+              </div>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

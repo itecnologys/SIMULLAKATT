@@ -44,7 +44,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 }`}
               >
                 <BarChart className="h-5 w-5" />
-                <span>Dashboard</span>
+                <span>Índices</span>
               </Link>
               <Link
                 href="/dashboard/setup"
