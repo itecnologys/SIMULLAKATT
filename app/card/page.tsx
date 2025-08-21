@@ -379,7 +379,7 @@ export default function CardPage() {
               <CardContent>
                 <div className="space-y-4">
                   {cards.map((card) => (
-                    <div key={card.id} className={`border rounded-lg p-4 transition-all ${
+                    <div key={`card-overview-${card.id}`} className={`border rounded-lg p-4 transition-all ${
                       card.status === 'active' 
                         ? 'border-green-200 bg-green-50' 
                         : 'border-gray-200 bg-gray-50'
@@ -749,7 +749,7 @@ export default function CardPage() {
                   {cards.map((card) => {
                     const allTransactions = card.creditLines.flatMap(line => line.transactions)
                     return (
-                      <div key={card.id} className="border border-gray-200 rounded-lg p-3">
+                      <div key={`card-transactions-${card.id}`} className="border border-gray-200 rounded-lg p-3">
                         <div className="flex items-center justify-between mb-2">
                           <div>
                             <h4 className="font-medium text-gray-900">{card.name}</h4>
